@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home, Navigation, Users, Briefcase, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -11,12 +11,12 @@ export default function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
 
-  // Memoize navigation items to prevent recreating on every render
+  // Memoize navigation items with icons for bottom nav
   const navItems = useMemo(() => [
-    { label: "Home", href: "/" },
-    { label: "Navi", href: "/Navi" },
-    { label: "Counsellors", href: "/counsellors" },
-    { label: "Industry Experts", href: "/industry-experts" }
+    { label: "Home", href: "/", icon: Home },
+    { label: "Navi", href: "/Navi", icon: Navigation },
+    { label: "Counsellors", href: "/counsellors", icon: Users },
+    { label: "Industry Experts", href: "/industry-experts", icon: Briefcase }
   ], []);
 
   // Memoize active route check to prevent recalculating on every render
@@ -26,8 +26,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Navigation - Fixed and Sticky */}
-      <nav className="fixed top-0 left-0 right-0 bg-[#151515] shadow-md z-50">
+      {/* Desktop Navigation - Fixed and Sticky */}
+      <nav className="hidden md:block fixed top-0 left-0 right-0 bg-[#151515] shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -45,7 +45,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation with Pill Styling */}
-            <div className="hidden md:flex items-center">
+            <div className="flex items-center">
               <div className="flex bg-[#1F1F1F] border border-gray-600 rounded-lg px-2 py-1 space-x-2">
                 {navItems.map((item) => (
                   <Link
@@ -64,7 +64,7 @@ export default function Navbar() {
             </div>
 
             {/* Login Button */}
-            <div className="hidden md:block">
+            <div>
               <button
                 onClick={() => setIsLoginModalOpen(true)}
                 className="bg-[#FF6C4A] hover:opacity-90 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition-all"
@@ -72,51 +72,64 @@ export default function Navbar() {
                 Login
               </button>
             </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white p-2"
-                aria-label="Toggle menu"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden px-4 pb-4">
-            <div className="space-y-2 pt-4 border-t border-gray-700">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`block text-white px-4 py-2 rounded-full text-center font-medium transition ${
-                    isActiveRoute(item.href)
-                      ? "bg-[#FF6C4A]"
-                      : "bg-[#2a2a2a] hover:bg-[#FF6C4A]/90"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <button
-                onClick={() => {
-                  setIsLoginModalOpen(true);
-                  setIsMenuOpen(false);
-                }}
-                className="w-full bg-[#FF6C4A] text-white px-4 py-2 rounded-full font-semibold mt-2 transition hover:opacity-90"
-              >
-                Login
-              </button>
-            </div>
-          </div>
-        )}
       </nav>
+
+      {/* Mobile Top Bar with Logo */}
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#151515] shadow-md z-50">
+        <div className="flex justify-between items-center h-16 px-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/assets/Fulllogo.png"
+              alt="Guido Logo"
+              width={140}
+              height={40}
+              priority
+              className="cursor-pointer"
+            />
+          </Link>
+          
+          {/* Login Button */}
+          <button
+            onClick={() => setIsLoginModalOpen(true)}
+            className="bg-[#FF6C4A] hover:opacity-90 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all"
+          >
+            <User size={16} className="inline mr-1" />
+            Login
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#151515] border-t border-gray-700 z-50">
+        <div className="flex justify-around items-center py-2">
+          {navItems.map((item) => {
+            const IconComponent = item.icon;
+            const isActive = isActiveRoute(item.href);
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all ${
+                  isActive
+                    ? "bg-[#FF6C4A] text-white" 
+                    : "text-gray-400 hover:text-white hover:bg-gray-700"
+                }`}
+              >
+                <IconComponent size={20} className="mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Add padding to body content for mobile */}
+      <div className="md:hidden h-16"></div> {/* Top spacing for mobile */}
+      <div className="md:hidden h-16 fixed bottom-0 w-full pointer-events-none"></div> {/* Bottom spacing for mobile */}
 
       {/* Login Modal */}
       {isLoginModalOpen && (

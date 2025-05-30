@@ -305,7 +305,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-20 px-6 bg-[#151515] text-white">
+        {/* <section className="py-20 px-6 bg-[#151515] text-white">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-bold mb-4 text-[#FF6C4A]">Meet NAVI</h2>
@@ -327,7 +327,7 @@ export default function Home() {
               />
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Services Section */}
         <section id="services" className="py-20 bg-[#151515]">
