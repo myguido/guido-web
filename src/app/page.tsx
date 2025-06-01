@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronRight, Check, Star, Users } from 'lucide-react';
+import { ChevronRight, Check, Star, Users, X } from 'lucide-react';
 import Image from 'next/image';
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import ContactForm from './contactform';
 import Navbar from '../components/Navbar';
+import AboutUsPage from '../components/AboutUsPage'; // Import the About Us component
 import {
   UserCheck,
   CalendarCheck,
@@ -142,6 +143,12 @@ function TestimonialSlider() {
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [showAboutUs, setShowAboutUs] = useState(false);
+
+  // If About Us is selected, show the About Us page
+  if (showAboutUs) {
+    return <AboutUsPage onBack={() => setShowAboutUs(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -304,31 +311,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* <section className="py-20 px-6 bg-[#151515] text-white">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold mb-4 text-[#FF6C4A]">Meet NAVI</h2>
-              <p className="text-xl text-gray-300 leading-relaxed mb-6">
-                Your smart career guide within GUIDO — designed to simplify your journey. NAVI provides personalized recommendations, real-time insights, and strategic advice to help you make informed career decisions.
-              </p>
-              <p className="text-xl text-gray-300 leading-relaxed">
-                Whether you're exploring new paths, evaluating opportunities, or seeking clarity, NAVI ensures that every step you take is a step in the right direction.
-              </p>
-            </div>
-            <div className="flex justify-center">
-              <video
-                className="rounded-2xl shadow-lg w-full max-w-xl h-64 object-cover"
-                src="/assets/NaviLogo.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            </div>
-          </div>
-        </section> */}
-
+        
         {/* Services Section */}
         <section id="services" className="py-20 bg-[#151515]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -452,7 +435,14 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold mb-4">Company</h4>
                 <ul className="space-y-2 text-gray-400">
-                  <li>About Us</li>
+                  <li>
+                    <button 
+                      onClick={() => setShowAboutUs(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      About Us
+                    </button>
+                  </li>
                   <li>Careers</li>
                   <li>Blog</li>
                   <li>Contact</li>
