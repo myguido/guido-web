@@ -250,32 +250,33 @@ export default function Home() {
             ].map(({ title, desc, icon }, i) => (
               <div
                 key={i}
-                className="p-6 bg-gray-50 rounded-xl shadow hover:shadow-lg transition duration-300"
-              >
+className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover:border-[#FF6C4A] transition duration-300"
+>
+
                 {icon}
                 <h3 className="text-xl font-semibold mb-3 text-[#FF6C4A]">{title}</h3>
-                <p className="text-gray-600 leading-relaxed">{desc}</p>
+                <p className="text-white-600 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 bg-gray-50">
+        <section id="about" className="py-20 bg-[#151515]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               
               {/* Text Content */}
               <div>
-                <h2 className="text-4xl font-extrabold text-gray-900 mb-6">
+                <h2 className="text-4xl font-extrabold text-White-900 mb-6">
                   About <span className="text-[#FF6C4A]">GUIDO</span>
                 </h2>
 
-                <p className="text-lg text-gray-700 mb-4 leading-relaxed">
+                <p className="text-lg text-white-700 mb-4 leading-relaxed">
                   <strong>GUIDO was born from a simple yet powerful idea</strong> — to help individuals navigate their career paths with clarity and confidence. Too often, career choices in India are driven by societal pressure rather than personal passion.
                 </p>
 
-                <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+                <p className="text-lg text-white-700 mb-6 leading-relaxed">
                   GUIDO's process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
                 </p>
 
@@ -285,7 +286,7 @@ export default function Home() {
                     "Data-driven career mapping technology",
                     "End-to-end support throughout your journey",
                   ].map((point, i) => (
-                    <li key={i} className="flex items-center text-gray-700">
+                    <li key={i} className="flex items-center text-white-700">
                       <Check className="text-[#FF6C4A] mr-3" size={20} />
                       {point}
                     </li>
@@ -363,17 +364,17 @@ export default function Home() {
               ].map((service, index) => (
                 <div
                   key={index}
-                  className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
+                  className="bg-[#1E1E1E] p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
                 >
                   <h3 className="text-2xl font-semibold text-[#FF6C4A] mb-4">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600 mb-6">{service.description}</p>
+                  <p className="text-white-600 mb-6">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
                       <li
                         key={idx}
-                        className="flex items-center text-gray-700"
+                        className="flex items-center text-white-700"
                       >
                         <Check className="text-[#FF6C4A] mr-2" size={16} />
                         {feature}
@@ -401,10 +402,10 @@ export default function Home() {
         </section>
 
         {/* Contact Section */}
-        <ContactForm />
+        {/* <ContactForm /> */}
 
         {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12">
+        <footer className="bg-[#151515] text-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
