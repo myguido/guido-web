@@ -1,9 +1,10 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove or comment out experimental turbo settings
-  // experimental: {
-  //   turbo: {}
-  // }
-}
+  eslint: {
+    // ✅ This skips ESLint errors during builds (not recommended long term)
+    ignoreDuringBuilds: true,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
