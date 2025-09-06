@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Send, Mic, Paperclip, Bot, User, Plus, MessageSquare, Trash2, Menu, X, Home, Navigation, Users, Briefcase } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { Send, Mic, Plus, User, Menu, X, Home, Navigation, Users, Briefcase, Sparkles, MessageSquare, Trash2, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// Navbar Component
+// Navbar Component (unchanged as requested)
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
 
-  // Memoize navigation items with icons for bottom nav
   const navItems = useMemo(() => [
     { label: "Home", href: "/", icon: Home },
     { label: "Navi", href: "/Navi", icon: Navigation },
@@ -20,7 +19,6 @@ const Navbar = () => {
     { label: "Industry Experts", href: "/industry-experts", icon: Briefcase }
   ], []);
 
-  // Memoize active route check to prevent recalculating on every render
   const isActiveRoute = useMemo(() => (href) => {
     return pathname === href;
   }, [pathname]);
@@ -213,14 +211,15 @@ const NaviPage = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [hasInitialized, setHasInitialized] = useState(false);
   const [chatHistory, setChatHistory] = useState([
-    { id: 1, title: "Career Assessment Discussion", timestamp: "2 hours ago", active: true },
-    { id: 2, title: "Skill Gap Analysis", timestamp: "Yesterday" },
-    { id: 3, title: "Industry Trends Overview", timestamp: "3 days ago" },
-    { id: 4, title: "Salary Negotiation Tips", timestamp: "1 week ago" },
+    { id: 1, title: "New Chat", timestamp: "Just now", active: true },
+    { id: 2, title: "Career Assessment Discussion", timestamp: "2 hours ago" },
+    { id: 3, title: "Skill Gap Analysis", timestamp: "Yesterday" },
+    { id: 4, title: "Industry Trends Overview", timestamp: "3 days ago" },
+    { id: 5, title: "Salary Negotiation Tips", timestamp: "1 week ago" },
   ]);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -230,7 +229,6 @@ const NaviPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Get time-based greeting
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -238,58 +236,21 @@ const NaviPage = () => {
     return "Good evening";
   };
 
-  // Initialize chat with delayed messages
-  useEffect(() => {
-    if (!hasInitialized) {
-      setHasInitialized(true);
-      
-      // Start typing immediately
-      setIsTyping(true);
-      
-      // First message after 2 seconds
-      setTimeout(() => {
-        const greeting = getGreeting();
-        const firstMessage = {
-          id: 1,
-          text: `${greeting}! I'm NAVI, your personal career guide. I'm here to help you navigate your career journey with personalized insights and recommendations.`,
-          sender: 'navi',
-          timestamp: new Date().toLocaleTimeString(),
-        };
-        
-        setMessages([firstMessage]);
-        setIsTyping(true); // Continue typing for second message
-        
-        // Second message after another 2 seconds
-        setTimeout(() => {
-          const secondMessage = {
-            id: 2,
-            text: "How can I help you today? Feel free to ask me about career planning, skill development, industry insights, or anything else related to your professional journey.",
-            sender: 'navi',
-            timestamp: new Date().toLocaleTimeString(),
-          };
-          
-          setMessages(prev => [...prev, secondMessage]);
-          setIsTyping(false);
-        }, 2000);
-      }, 2000);
-    }
-  }, [hasInitialized]);
-
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
-    const newMessage = {
+    const userMessage = {
       id: messages.length + 1,
       text: inputText,
       sender: 'user',
       timestamp: new Date().toLocaleTimeString(),
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInputText('');
     setIsTyping(true);
 
-    // Simulate API response for demo
+    // Simulate API response
     setTimeout(() => {
       const naviResponse = {
         id: messages.length + 2,
@@ -317,10 +278,8 @@ const NaviPage = () => {
       ...prev.map(chat => ({ ...chat, active: false }))
     ]);
     
-    // Reset chat and reinitialize
+    // Reset chat
     setMessages([]);
-    setHasInitialized(false);
-    setSidebarOpen(false);
   };
 
   const handleChatSelect = (chatId) => {
@@ -330,7 +289,9 @@ const NaviPage = () => {
         active: chat.id === chatId 
       }))
     );
-    setSidebarOpen(false);
+    
+    // Reset messages for demo
+    setMessages([]);
   };
 
   const handleDeleteChat = (chatId, e) => {
@@ -340,184 +301,241 @@ const NaviPage = () => {
 
   return (
     <>
-      {/* Include the Navbar */}
       <Navbar />
       
       {/* Add top spacing for the fixed navbar */}
       <div className="h-20 md:h-20"></div>
       
-      <div className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#1A1A1A] text-white flex">
+      <div className="min-h-screen bg-[#131314] text-white flex relative">
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="fixed top-24 left-4 z-50 p-2 bg-[#1f1f20] hover:bg-[#2a2b2c] rounded-lg transition-all border border-[#2f3031] md:block"
+        >
+          <Menu size={20} className="text-[#e8eaed]" />
+        </button>
+
         {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-40 w-80 bg-[#0A0A0A]/95 backdrop-blur-xl border-r border-gray-800/50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:block`} style={{ top: '80px' }}>
-          <div className="flex flex-col h-full">
-            {/* Sidebar Header */}
-            <div className="p-6 border-b border-gray-800/50">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-[#FF6C4A] to-[#FF8A50] bg-clip-text text-transparent">
-                  NAVI Chat
-                </h2>
-                <button 
-                  onClick={() => setSidebarOpen(false)}
-                  className="lg:hidden p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+        {sidebarOpen && (
+          <>
+            {/* Mobile Overlay */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-30 md:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+            
+            {/* Sidebar Content */}
+            <div className={`fixed top-20 left-0 h-[calc(100vh-80px)] w-80 bg-[#1f1f20] border-r border-[#2f3031] z-40 transform transition-transform ${
+              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:relative md:translate-x-0 md:top-0 md:h-[calc(100vh-80px)]`}>
+              {/* Sidebar Header */}
+              <div className="flex items-center justify-between p-4 border-b border-[#2f3031]">
+                <h2 className="text-lg font-semibold text-[#e8eaed]">NAVI</h2>
+                <button
+                  onClick={handleNewChat}
+                  className="p-2 hover:bg-[#2a2b2c] rounded-lg transition-colors"
                 >
-                  <X size={20} />
+                  <Plus size={18} className="text-[#9aa0a6]" />
                 </button>
               </div>
-              <button
-                onClick={handleNewChat}
-                className="w-full flex items-center space-x-3 p-3 bg-gradient-to-r from-[#FF6C4A] to-[#FF8A50] hover:from-[#FF5722] hover:to-[#FF7043] rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Plus size={18} />
-                <span className="font-medium">New Chat</span>
-              </button>
-            </div>
 
-            {/* Chat History */}
-            <div className="flex-1 overflow-y-auto p-4">
-              <h3 className="text-sm font-medium text-gray-400 mb-4 px-2">Recent Chats</h3>
-              <div className="space-y-2">
-                {chatHistory.map((chat) => (
-                  <div
-                    key={chat.id}
-                    onClick={() => handleChatSelect(chat.id)}
-                    className={`group relative p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-800/50 ${
-                      chat.active ? 'bg-[#FF6C4A]/20 border border-[#FF6C4A]/30' : 'hover:bg-gray-800/30'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <MessageSquare size={16} className={`mt-1 flex-shrink-0 ${chat.active ? 'text-[#FF6C4A]' : 'text-gray-400'}`} />
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${chat.active ? 'text-white' : 'text-gray-300'}`}>
-                          {chat.title}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">{chat.timestamp}</p>
-                      </div>
-                      <button
-                        onClick={(e) => handleDeleteChat(chat.id, e)}
-                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-all"
-                      >
-                        <Trash2 size={12} className="text-red-400" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:ml-0">
-          {/* Chat Area */}
-          <div className="flex-1 flex flex-col">
-            <div className="flex-1 overflow-y-auto px-4 py-6">
-              {/* Messages */}
-              <div className="max-w-4xl mx-auto space-y-6">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ${
-                        message.sender === 'user' 
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
-                          : 'bg-gradient-to-r from-[#FF6C4A] to-[#FF8A50]'
-                      }`}>
-                        {message.sender === 'user' ? (
-                          <User size={16} className="text-white" />
-                        ) : (
-                          <Bot size={16} className="text-white" />
-                        )}
-                      </div>
-                      <div className={`rounded-2xl px-4 py-3 shadow-lg ${
-                        message.sender === 'user'
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-                          : 'bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-gray-700/50'
-                      }`}>
-                        <p className="text-sm leading-relaxed">{message.text}</p>
-                        <p className={`text-xs mt-2 ${
-                          message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'
-                        }`}>
-                          {message.timestamp}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="flex items-start space-x-3 max-w-[80%]">
-                      <div className="w-8 h-8 bg-gradient-to-r from-[#FF6C4A] to-[#FF8A50] rounded-full flex items-center justify-center shadow-lg">
-                        <Bot size={16} className="text-white" />
-                      </div>
-                      <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-gray-700/50 rounded-2xl px-4 py-3 shadow-lg">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-[#FF6C4A] rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-[#FF6C4A] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-[#FF6C4A] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-
-            {/* Input Section */}
-            <div className="sticky bottom-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/95 to-transparent p-4 mb-16 md:mb-0">
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-4 shadow-2xl">
-                  <div className="flex items-end space-x-3">
-                    <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
-                      <Paperclip size={20} className="text-gray-400" />
-                    </button>
-                    <div className="flex-1">
-                      <textarea
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                          }
-                        }}
-                        placeholder="Ask NAVI about your career..."
-                        className="w-full bg-transparent text-white placeholder-gray-400 resize-none focus:outline-none max-h-32"
-                        rows="1"
-                        disabled={isTyping}
-                      />
-                    </div>
-                    <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
-                      <Mic size={20} className="text-gray-400" />
-                    </button>
-                    <button
-                      onClick={handleSendMessage}
-                      disabled={!inputText.trim() || isTyping}
-                      className={`p-2 rounded-lg transition-all transform ${
-                        inputText.trim() && !isTyping
-                          ? 'bg-gradient-to-r from-[#FF6C4A] to-[#FF8A50] hover:from-[#FF5722] hover:to-[#FF7043] text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95'
-                          : 'bg-gray-700/50 text-gray-400 cursor-not-allowed'
+              {/* Chat History */}
+              <div className="flex-1 overflow-y-auto p-2">
+                <div className="space-y-1">
+                  {chatHistory.map((chat) => (
+                    <div
+                      key={chat.id}
+                      onClick={() => handleChatSelect(chat.id)}
+                      className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
+                        chat.active ? 'bg-[#2f3031]' : 'hover:bg-[#2a2b2c]'
                       }`}
                     >
-                      <Send size={20} />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3 flex-1 min-w-0">
+                          <MessageSquare size={16} className="text-[#9aa0a6] flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-[#e8eaed] truncate">{chat.title}</p>
+                            <p className="text-xs text-[#9aa0a6] mt-1">{chat.timestamp}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => handleDeleteChat(chat.id, e)}
+                          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#3f4041] rounded transition-all"
+                        >
+                          <Trash2 size={12} className="text-[#9aa0a6]" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-h-0 relative">
+          {messages.length === 0 && !isTyping ? (
+            /* Welcome Screen - Gemini Style */
+            <div className="flex-1 flex flex-col items-center justify-center px-4">
+              <div className="w-full max-w-2xl mx-auto">
+                {/* Greeting */}
+                <div className="text-center mb-16">
+                  <h1 className="text-4xl md:text-5xl font-light text-[#FF6C4A] mb-2">
+                    Hello, Ritwaj
+                  </h1>
+                </div>
+                
+                {/* Centered Input Box */}
+                <div className="w-full max-w-2xl mx-auto">
+                  <div className="bg-[#1f1f20] border border-[#2f3031] rounded-full px-6 py-4 shadow-lg hover:shadow-xl transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <input
+                          ref={inputRef}
+                          value={inputText}
+                          onChange={(e) => setInputText(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSendMessage();
+                            }
+                          }}
+                          placeholder="Ask NAVI"
+                          className="w-full bg-transparent text-[#e8eaed] placeholder-[#9aa0a6] focus:outline-none text-base"
+                          disabled={isTyping}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-[#2a2b2c] rounded-full transition-colors">
+                          <Mic size={20} className="text-[#9aa0a6]" />
+                        </button>
+                        <button
+                          onClick={handleSendMessage}
+                          disabled={!inputText.trim() || isTyping}
+                          className={`p-2 rounded-full transition-all ${
+                            inputText.trim() && !isTyping
+                              ? 'bg-[#661F13] hover:bg-[#7a241a] text-white'
+                              : 'text-[#5f6368] cursor-not-allowed'
+                          }`}
+                        >
+                          <Send size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Tools Button */}
+                  <div className="flex justify-center mt-4">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1f1f20] border border-[#2f3031] rounded-full hover:bg-[#2a2b2c] transition-colors">
+                      <Settings size={16} className="text-[#9aa0a6]" />
+                      <span className="text-sm text-[#9aa0a6]">Tools</span>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          ) : (
+            /* Chat Messages */
+            <>
+              <div className="flex-1 overflow-y-auto">
+                <div className="max-w-4xl mx-auto px-6 py-8">
+                  <div className="space-y-8">
+                    {messages.map((message) => (
+                      <div key={message.id}>
+                        {message.sender === 'user' ? (
+                          /* User Message - Right aligned with background */
+                          <div className="flex justify-end mb-6">
+                            <div className="flex items-end gap-3 max-w-2xl">
+                              <div className="bg-[#1f1f20] border border-[#2f3031] rounded-2xl rounded-br-md px-5 py-3">
+                                <p className="text-[#e8eaed] text-base leading-relaxed">{message.text}</p>
+                              </div>
+                              <div className="text-xs text-[#9aa0a6] mb-1 whitespace-nowrap">You</div>
+                            </div>
+                          </div>
+                        ) : (
+                          /* NAVI Message - Left aligned with avatar */
+                          <div className="flex items-start gap-4 mb-6">
+                            {/* NAVI Avatar */}
+                            <div className="w-8 h-8 bg-[#FF6C4A] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                              <Sparkles size={16} className="text-white" />
+                            </div>
+                            
+                            {/* Message Content */}
+                            <div className="flex-1 max-w-3xl">
+                              <div className="text-sm font-medium text-[#e8eaed] mb-2">NAVI</div>
+                              <div className="text-[#e8eaed] text-base leading-relaxed">
+                                {message.text}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    
+                    {isTyping && (
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className="w-8 h-8 bg-[#FF6C4A] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <Sparkles size={16} className="text-white" />
+                        </div>
+                        <div className="flex-1 max-w-3xl">
+                          <div className="text-sm font-medium text-[#e8eaed] mb-2">NAVI</div>
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-[#9aa0a6] rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-[#9aa0a6] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-[#9aa0a6] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </div>
+              </div>
 
-        {/* Sidebar Overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+              {/* Input Section - Fixed at bottom during conversation */}
+              <div className="border-t border-[#2f3031] bg-[#131314] p-4">
+                <div className="max-w-3xl mx-auto">
+                  <div className="bg-[#1f1f20] border border-[#2f3031] rounded-full px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <input
+                          value={inputText}
+                          onChange={(e) => setInputText(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSendMessage();
+                            }
+                          }}
+                          placeholder="Ask NAVI"
+                          className="w-full bg-transparent text-[#e8eaed] placeholder-[#9aa0a6] focus:outline-none text-base"
+                          disabled={isTyping}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-[#2a2b2c] rounded-full transition-colors">
+                          <Mic size={20} className="text-[#9aa0a6]" />
+                        </button>
+                        <button
+                          onClick={handleSendMessage}
+                          disabled={!inputText.trim() || isTyping}
+                          className={`p-2 rounded-full transition-all ${
+                            inputText.trim() && !isTyping
+                              ? 'bg-[#661F13] hover:bg-[#7a241a] text-white'
+                              : 'text-[#5f6368] cursor-not-allowed'
+                          }`}
+                        >
+                          <Send size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

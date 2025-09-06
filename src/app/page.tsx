@@ -1,13 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronRight, Check, Star, Users, X } from 'lucide-react';
+import { ChevronRight, Check, Star, Users, LogOut, User, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import ContactForm from './contactform';
 import Navbar from '../components/Navbar';
-import AboutUsPage from '../components/AboutUsPage'; // Import the About Us component
+import AboutUsPage from '../components/AboutUsPage';
+import CareersPage from '../components/CareersPage';
+import ContactPage from '../components/ContactPage';
+import AuthManager from '../components/auth/AuthManager';
+import { AuthProvider, useAuth } from '../components/auth/AuthProvider';
 import {
   UserCheck,
   CalendarCheck,
@@ -16,6 +20,147 @@ import {
   Wallet,
 } from "lucide-react"
 
+// Authenticated Home Dashboard Component
+function AuthenticatedHome({ user }) {
+  return (
+    <div className="min-h-screen bg-[#151515] pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Welcome Section */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-white mb-4">
+            Welcome back, {user?.user_metadata?.firstName || 'there'}! 👋
+          </h1>
+          <p className="text-xl text-gray-300">
+            Ready to continue your career journey?
+          </p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">Mentorship Sessions</p>
+                <p className="text-2xl font-bold text-white">12</p>
+              </div>
+              <div className="w-12 h-12 bg-[#FF6C4A]/20 rounded-lg flex items-center justify-center">
+                <Users className="text-[#FF6C4A]" size={24} />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">Workshops Attended</p>
+                <p className="text-2xl font-bold text-white">8</p>
+              </div>
+              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <CalendarCheck className="text-green-500" size={24} />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">Goals Completed</p>
+                <p className="text-2xl font-bold text-white">15</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="text-blue-500" size={24} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Current Goals */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-4">Current Goals</h3>
+            <div className="space-y-4">
+              {[
+                { title: "Complete React Development Course", progress: 75 },
+                { title: "Schedule Mock Interview", progress: 50 },
+                { title: "Update LinkedIn Profile", progress: 90 }
+              ].map((goal, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <p className="text-gray-300 text-sm">{goal.title}</p>
+                    <span className="text-xs text-gray-400">{goal.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-[#FF6C4A] h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${goal.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Upcoming Sessions */}
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-4">Upcoming Sessions</h3>
+            <div className="space-y-4">
+              {[
+                { 
+                  mentor: "Sarah Johnson", 
+                  topic: "Career Planning", 
+                  date: "Today, 3:00 PM",
+                  type: "1-on-1 Mentorship"
+                },
+                { 
+                  mentor: "Workshop Team", 
+                  topic: "Resume Building", 
+                  date: "Tomorrow, 11:00 AM",
+                  type: "Group Workshop"
+                }
+              ].map((session, index) => (
+                <div key={index} className="p-4 bg-[#151515] rounded-lg border border-gray-600">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium text-white">{session.topic}</h4>
+                    <span className="text-xs bg-[#FF6C4A] text-white px-2 py-1 rounded">
+                      {session.type}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-400">with {session.mentor}</p>
+                  <p className="text-xs text-[#FF6C4A] mt-1">{session.date}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
+          <h3 className="text-xl font-semibold text-white mb-6">Quick Actions</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { title: "Book Session", icon: <CalendarCheck size={20} /> },
+              { title: "Join Workshop", icon: <Users size={20} /> },
+              { title: "View Progress", icon: <TrendingUp size={20} /> },
+              { title: "Get Support", icon: <LifeBuoy size={20} /> }
+            ].map((action, index) => (
+              <button
+                key={index}
+                className="p-4 bg-[#151515] rounded-lg border border-gray-600 hover:border-[#FF6C4A] transition-colors text-center group"
+              >
+                <div className="text-[#FF6C4A] group-hover:text-white mb-2 flex justify-center">
+                  {action.icon}
+                </div>
+                <p className="text-sm text-gray-300 group-hover:text-white">{action.title}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Testimonial Slider Component
 function TestimonialSlider() {
   const [sliderRef] = useKeenSlider({
     loop: true,
@@ -49,7 +194,7 @@ function TestimonialSlider() {
         if (mouseOver) return
         timeout = setTimeout(() => {
           slider.next()
-        }, 2000) // Move every 3 seconds
+        }, 2000)
       }
       
       slider.on("created", () => {
@@ -141,20 +286,21 @@ function TestimonialSlider() {
   )
 }
 
-export default function Home() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+// Public Landing Page Component
+function PublicHomePage() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [showAboutUs, setShowAboutUs] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [showCareers, setShowCareers] = useState(false);
 
-  // If About Us is selected, show the About Us page
-  if (showAboutUs) {
-    return <AboutUsPage onBack={() => setShowAboutUs(false)} />;
-  }
+  // Handle successful authentication
+  const handleAuthSuccess = (user, mode) => {
+    console.log(`${mode} successful:`, user);
+    setIsAuthModalOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Include Navbar Component */}
-      <Navbar />
-
       {/* Add padding-top to account for fixed navbar (h-20 = 80px) */}
       <div className="pt-20">
         {/* Hero Section */}
@@ -171,7 +317,7 @@ export default function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button 
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => setIsAuthModalOpen(true)}
                     style={{ backgroundColor: '#FF6C4A' }}
                     className="hover:opacity-90 px-8 py-4 rounded-lg text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center text-white"
                   >
@@ -181,30 +327,37 @@ export default function Home() {
               </div>
 
               {/* Right UI Simulation / Mock Widget */}
-              <div className="relative">
-                <div
-                  style={{ background: 'linear-gradient(to right, #FF6C4A, #dc2626)' }}
-                  className="rounded-2xl p-8 transform rotate-3 shadow-2xl"
-                >
-                  <div className="bg-white rounded-lg p-6 transform -rotate-3">
-                    <div className="space-y-4">
-                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      <div
-                        style={{ background: 'linear-gradient(to bottom right, #fed7aa, #fdba74)' }}
-                        className="h-32 rounded"
-                      ></div>
-                      <div className="flex justify-between">
-                        <div
-                          className="h-4 rounded w-1/3"
-                          style={{ backgroundColor: '#FF6C4A' }}
-                        ></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div className="relative">
+  <div
+    style={{ background: 'linear-gradient(to right, #FF6C4A, #dc2626)' }}
+    className="rounded-2xl p-8 transform rotate-3 shadow-2xl"
+  >
+    <div className="bg-white rounded-lg p-4 transform -rotate-3">
+      <div className="space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+
+        {/* Image container with proper 16:9 aspect ratio */}
+        <div className="relative w-full rounded overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <img
+            src="/assets/newbannerwebsite.png"
+            alt="Widget Preview"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="flex justify-between">
+          <div
+            className="h-3 rounded w-1/3"
+            style={{ backgroundColor: '#FF6C4A' }}
+          ></div>
+          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
             </div>
           </div>
         </section>
@@ -250,12 +403,11 @@ export default function Home() {
             ].map(({ title, desc, icon }, i) => (
               <div
                 key={i}
-className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover:border-[#FF6C4A] transition duration-300"
->
-
+                className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover:border-[#FF6C4A] transition duration-300"
+              >
                 {icon}
                 <h3 className="text-xl font-semibold mb-3 text-[#FF6C4A]">{title}</h3>
-                <p className="text-white-600 leading-relaxed">{desc}</p>
+                <p className="text-gray-300 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -268,15 +420,15 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
               
               {/* Text Content */}
               <div>
-                <h2 className="text-4xl font-extrabold text-White-900 mb-6">
+                <h2 className="text-4xl font-extrabold text-white mb-6">
                   About <span className="text-[#FF6C4A]">GUIDO</span>
                 </h2>
 
-                <p className="text-lg text-white-700 mb-4 leading-relaxed">
+                <p className="text-lg text-gray-300 mb-4 leading-relaxed">
                   <strong>GUIDO was born from a simple yet powerful idea</strong> — to help individuals navigate their career paths with clarity and confidence. Too often, career choices in India are driven by societal pressure rather than personal passion.
                 </p>
 
-                <p className="text-lg text-white-700 mb-6 leading-relaxed">
+                <p className="text-lg text-gray-300 mb-6 leading-relaxed">
                   GUIDO's process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
                 </p>
 
@@ -286,7 +438,7 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
                     "Data-driven career mapping technology",
                     "End-to-end support throughout your journey",
                   ].map((point, i) => (
-                    <li key={i} className="flex items-center text-white-700">
+                    <li key={i} className="flex items-center text-gray-300">
                       <Check className="text-[#FF6C4A] mr-3" size={20} />
                       {point}
                     </li>
@@ -318,7 +470,7 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-[#FF6C4A] mb-4">What We Offer</h2>
-              <p className="text-xl text-white max-w-3xl mx-auto">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 A complete ecosystem designed to help you explore, prepare, and thrive in your ideal career path.
               </p>
             </div>
@@ -364,17 +516,17 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
               ].map((service, index) => (
                 <div
                   key={index}
-                  className="bg-[#1E1E1E] p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
+                  className="bg-[#1E1E1E] p-8 rounded-2xl shadow-lg border border-gray-700 hover:shadow-xl transition-shadow"
                 >
                   <h3 className="text-2xl font-semibold text-[#FF6C4A] mb-4">
                     {service.title}
                   </h3>
-                  <p className="text-white-600 mb-6">{service.description}</p>
+                  <p className="text-gray-300 mb-6">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
                       <li
                         key={idx}
-                        className="flex items-center text-white-700"
+                        className="flex items-center text-gray-300"
                       >
                         <Check className="text-[#FF6C4A] mr-2" size={16} />
                         {feature}
@@ -400,9 +552,6 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
             <TestimonialSlider />
           </div>
         </section>
-
-        {/* Contact Section */}
-        {/* <ContactForm /> */}
 
         {/* Footer */}
         <footer className="bg-[#151515] text-white py-12">
@@ -444,18 +593,48 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
                       About Us
                     </button>
                   </li>
-                  <li>Careers</li>
+                  <li>
+                    <button 
+                      onClick={() => setShowCareers(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      Careers
+                    </button>
+                  </li>
                   <li>Blog</li>
-                  <li>Contact</li>
+                  <li>
+                    <button 
+                      onClick={() => setShowContact(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      Contact
+                    </button>
+                  </li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-semibold mb-4">Connect</h4>
                 <ul className="space-y-2 text-gray-400">
-                  <li>LinkedIn</li>
-                  <li>Twitter</li>
-                  <li>Facebook</li>
-                  <li>Instagram</li>
+                  <li>
+                    <a href="#" className="hover:text-white transition-colors">
+                      LinkedIn
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="hover:text-white transition-colors">
+                      Twitter
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="hover:text-white transition-colors">
+                      Facebook
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="hover:text-white transition-colors">
+                      Instagram
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -464,83 +643,74 @@ className="p-6 bg-[#1E1E1E] rounded-xl shadow hover:shadow-lg hover:border hover
             </div>
           </div>
         </footer>
-      </div>
 
-      {/* Login Modal - moved outside the pt-20 div so it's not affected by padding */}
-      {isLoginModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-md">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Login</h2>
-              <button 
-                onClick={() => setIsLoginModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input 
-                  type="email" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                  placeholder="Enter your email"
-                  onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #FF6C4A'}
-                  onBlur={(e) => e.target.style.boxShadow = 'none'}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <input 
-                  type="password" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                  placeholder="Enter your password"
-                  onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #FF6C4A'}
-                  onBlur={(e) => e.target.style.boxShadow = 'none'}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
-                  <input 
-                    type="checkbox" 
-                    className="rounded border-gray-300 focus:ring-2"
-                    style={{ accentColor: '#FF6C4A' }}
-                  />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-                <a 
-                  href="#" 
-                  className="text-sm hover:opacity-80"
-                  style={{ color: '#FF6C4A' }}
-                >
-                  Forgot password?
-                </a>
-              </div>
-              
-              <button 
-                style={{ backgroundColor: '#FF6C4A' }}
-                className="w-full hover:opacity-90 text-white py-3 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Sign In
-              </button>
-              
-              <div className="text-center">
-                <span className="text-sm text-gray-600">Don't have an account? </span>
-                <a 
-                  href="#" 
-                  className="text-sm font-medium hover:opacity-80"
-                  style={{ color: '#FF6C4A' }}
-                >
-                  Sign up
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Modal Components - Add these after your footer */}
+        {showAboutUs && (
+          <AboutUsPage onClose={() => setShowAboutUs(false)} />
+        )}
+
+        {showContact && (
+          <ContactPage onClose={() => setShowContact(false)} isModal={true} />
+        )}
+
+        {showCareers && (
+          <CareersPage onClose={() => setShowCareers(false)} isModal={true} />
+        )}
+      </div>
+  
+      {/* Auth Modal - moved outside the pt-20 div so it's not affected by padding */}
+      {isAuthModalOpen && (
+        <AuthManager 
+          onClose={() => setIsAuthModalOpen(false)}
+          isModal={true}
+          initialMode="login"
+          onAuthSuccess={handleAuthSuccess}
+        />
       )}
     </div>
+  );
+}
+
+// Main Home Content Component
+function HomeContent() {
+  const { user, loading, signOut } = useAuth();
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#151515] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#FF6C4A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show authenticated dashboard if user is logged in
+  if (user) {
+    return (
+      <div className="min-h-screen bg-[#151515]">
+        <Navbar />
+        <AuthenticatedHome user={user} />
+      </div>
+    );
+  }
+
+  // Show public landing page for non-authenticated users
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <PublicHomePage />
+    </div>
+  );
+}
+
+// Main App Component wrapped with AuthProvider
+export default function Home() {
+  return (
+    <AuthProvider>
+      <HomeContent />
+    </AuthProvider>
   );
 }

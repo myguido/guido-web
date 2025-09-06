@@ -1,194 +1,246 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Users, Target, Award, Heart, Linkedin, Twitter, Mail, Lightbulb, Rocket, Shield } from 'lucide-react';
+import { ArrowLeft, Users, Target, Award, Heart, Linkedin, Twitter, Mail, Lightbulb, Rocket, Shield, Zap, Globe, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import Navbar from '../components/Navbar';
 
 export default function AboutUsPage({ onBack }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-[#151515] text-white overflow-x-hidden">
       {/* Include Navbar Component */}
       <Navbar />
 
       {/* Add padding-top to account for fixed navbar */}
       <div className="pt-20">
         {/* Back Button */}
-        <div className="bg-white/80 backdrop-blur-sm border-b border-orange-200">
+        <div className="bg-[#151515]/95 backdrop-blur-md border-b border-[#FF6C4A]/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <button
               onClick={onBack}
-              className="flex items-center text-[#FF6C4A] hover:text-opacity-80 font-semibold transition-colors group"
+              className="flex items-center text-[#FF6C4A] hover:text-[#FF876B] font-semibold transition-all duration-300 group"
             >
-              <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={20} />
+              <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform duration-300" size={20} />
               Back to Home
             </button>
           </div>
         </div>
 
-        {/* Hero Section with Illustrated Characters */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FF6C4A] to-red-600 text-white py-32">
-          {/* Background Pattern */}
+        {/* Hero Section */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* Animated Background Grid */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full"></div>
-            <div className="absolute top-40 right-20 w-20 h-20 bg-white rounded-full"></div>
-            <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-white rounded-full"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FF6C4A]/5 via-transparent to-[#FF876B]/5"></div>
+            {/* Grid Pattern */}
+            <div className="absolute inset-0" 
+                 style={{
+                   backgroundImage: `linear-gradient(rgba(255, 108, 74, 0.1) 1px, transparent 1px), 
+                                   linear-gradient(90deg, rgba(255, 108, 74, 0.1) 1px, transparent 1px)`,
+                   backgroundSize: '50px 50px'
+                 }}>
+            </div>
           </div>
           
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
-              <h1 className="text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-                MEET THE <span className="text-yellow-300">GUIDO</span> TEAM
+          {/* Floating Geometric Shapes */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-20 left-10 w-32 h-32 border border-[#FF6C4A]/30 rounded-full animate-pulse"></div>
+            <div className="absolute top-40 right-20 w-20 h-20 bg-gradient-to-br from-[#FF876B]/20 to-transparent rounded-full animate-bounce"></div>
+            <div className="absolute bottom-32 left-1/4 w-16 h-16 border border-[#FFB6A5]/40 rotate-45 animate-spin"></div>
+            <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-gradient-to-tr from-[#FF6C4A]/10 to-transparent rounded-full"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div className="mb-16">
+              <h1 className="text-7xl lg:text-8xl font-black mb-8 tracking-tight leading-tight">
+                MEET THE{' '}
+                <span className="bg-gradient-to-r from-[#FF6C4A] via-[#FF876B] to-[#FFB6A5] bg-clip-text text-transparent animate-pulse">
+                  GUIDO
+                </span>{' '}
+                TEAM
               </h1>
-              <p className="text-2xl text-orange-100 max-w-4xl mx-auto leading-relaxed font-light">
-                The creative minds behind India's most innovative career guidance platform
+              <p className="text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
+                The visionary minds revolutionizing career guidance through cutting-edge technology
               </p>
             </div>
 
-            {/* Illustrated Team Members */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-20">
-              {/* Founder 1 - Arjun */}
-              <div className="text-center group">
-                <div className="relative mb-8">
-                  {/* Character Illustration */}
-                  <div className="w-48 h-48 mx-auto bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                    {/* Glasses */}
-                    <div className="absolute top-16 w-20 h-8 border-4 border-gray-800 rounded-full bg-transparent"></div>
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-2 h-4 bg-gray-800"></div>
-                    {/* Eyes */}
-                    <div className="absolute top-20 left-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    <div className="absolute top-20 right-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    {/* Smile */}
-                    <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-8 h-4 border-b-4 border-gray-800 rounded-full"></div>
-                    {/* Hair */}
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-24 h-16 bg-gray-800 rounded-t-full"></div>
-                  </div>
-                  {/* Briefcase Icon */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-12 h-8 bg-gray-700 rounded flex items-center justify-center">
-                    <div className="w-2 h-1 bg-yellow-400"></div>
-                  </div>
-                </div>
-                <h3 className="text-3xl font-bold mb-2">ARJUN RAJESH</h3>
-                <p className="text-yellow-300 font-bold text-lg mb-4 uppercase tracking-wide">CEO & Co-Founder</p>
-                <p className="text-orange-100 leading-relaxed">
-                  Former McKinsey consultant turned career transformation evangelist. Believes everyone deserves to love what they do.
-                </p>
-              </div>
-
-              {/* Founder 2 - Priya */}
-              <div className="text-center group">
-                <div className="relative mb-8">
-                  {/* Character Illustration */}
-                  <div className="w-48 h-48 mx-auto bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                    {/* Glasses */}
-                    <div className="absolute top-16 w-20 h-8 border-4 border-gray-800 rounded-full bg-transparent"></div>
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-2 h-4 bg-gray-800"></div>
-                    {/* Eyes */}
-                    <div className="absolute top-20 left-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    <div className="absolute top-20 right-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    {/* Smile */}
-                    <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-8 h-4 border-b-4 border-gray-800 rounded-full"></div>
-                    {/* Hair - longer for female character */}
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-28 h-20 bg-gray-800 rounded-t-full"></div>
-                  </div>
-                  {/* Laptop Icon */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-12 h-8 bg-gray-700 rounded flex items-center justify-center">
-                    <div className="w-6 h-4 bg-green-400 rounded-sm"></div>
-                  </div>
-                </div>
-                <h3 className="text-3xl font-bold mb-2">PRIYA SHARMA</h3>
-                <p className="text-yellow-300 font-bold text-lg mb-4 uppercase tracking-wide">CTO & Co-Founder</p>
-                <p className="text-orange-100 leading-relaxed">
-                  Ex-Google engineer who codes the future of career guidance. Makes AI work for human dreams.
-                </p>
-              </div>
-
-              {/* Founder 3 - Vikram */}
-              <div className="text-center group">
-                <div className="relative mb-8">
-                  {/* Character Illustration */}
-                  <div className="w-48 h-48 mx-auto bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                    {/* Glasses */}
-                    <div className="absolute top-16 w-20 h-8 border-4 border-gray-800 rounded-full bg-transparent"></div>
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-2 h-4 bg-gray-800"></div>
-                    {/* Eyes */}
-                    <div className="absolute top-20 left-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    <div className="absolute top-20 right-12 w-3 h-3 bg-gray-800 rounded-full"></div>
-                    {/* Smile */}
-                    <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-8 h-4 border-b-4 border-gray-800 rounded-full"></div>
-                    {/* Hair */}
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-24 h-16 bg-gray-800 rounded-t-full"></div>
-                  </div>
-                  {/* People Icon */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-12 h-8 bg-gray-700 rounded flex items-center justify-center">
-                    <Users className="text-blue-400" size={16} />
-                  </div>
-                </div>
-                <h3 className="text-3xl font-bold mb-2">VIKRAM KUMAR</h3>
-                <p className="text-yellow-300 font-bold text-lg mb-4 uppercase tracking-wide">Head of Mentorship</p>
-                <p className="text-orange-100 leading-relaxed">
-                  Former Tata Group HR Director. Connects talented minds with their perfect mentors.
-                </p>
+            {/* Scroll Indicator */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <div className="w-6 h-10 border-2 border-[#FF6C4A] rounded-full flex justify-center">
+                <div className="w-1 h-3 bg-[#FF6C4A] rounded-full mt-2 animate-bounce"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* About GUIDO Section */}
-        <section className="py-24 bg-white relative overflow-hidden">
-          {/* Decorative cityscape silhouette */}
-          <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-gray-800 to-transparent opacity-10">
-            <div className="absolute bottom-0 left-10 w-8 h-20 bg-gray-600"></div>
-            <div className="absolute bottom-0 left-24 w-12 h-16 bg-gray-700"></div>
-            <div className="absolute bottom-0 left-44 w-10 h-24 bg-gray-600"></div>
-            <div className="absolute bottom-0 left-64 w-16 h-12 bg-gray-700"></div>
-            <div className="absolute bottom-0 right-10 w-8 h-18 bg-gray-600"></div>
-            <div className="absolute bottom-0 right-32 w-14 h-20 bg-gray-700"></div>
-          </div>
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#FF6C4A] to-red-600 rounded-full mb-8">
-                <Lightbulb className="text-white" size={40} />
-              </div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-6">ABOUT GUIDO</h2>
-              <div className="w-24 h-1 bg-[#FF6C4A] mx-auto mb-8"></div>
+        {/* Team Members Section */}
+        <section className="py-32 bg-gradient-to-b from-[#151515] to-gray-900 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent">
+                THE VISIONARIES
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] mx-auto"></div>
             </div>
 
-            <div className="max-w-4xl mx-auto">
-              <p className="text-2xl text-gray-700 leading-relaxed text-center mb-12 font-light">
-                GUIDO is a human-sized team of passionate individuals dedicated to revolutionizing career guidance in India. We believe that every person deserves to find their perfect career match, and we're here to make that happen through innovative technology and personalized mentorship.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-                <div className="text-center p-8 bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#FF6C4A] to-red-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <Target className="text-white" size={32} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {/* Team Member 1 */}
+              <div className="group">
+                <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/30 hover:border-[#FF6C4A]/50 transition-all duration-500 hover:transform hover:scale-105">
+                  {/* Futuristic Avatar */}
+                  <div className="relative mb-8">
+                    <div className="w-32 h-32 mx-auto relative">
+                      {/* Outer Ring */}
+                      <div className="absolute inset-0 rounded-full border-2 border-[#FF6C4A]/30 animate-spin"></div>
+                      {/* Inner Avatar */}
+                      <div className="absolute inset-2 bg-gradient-to-br from-[#FF6C4A] to-[#FF876B] rounded-full flex items-center justify-center">
+                        <div className="text-4xl font-bold text-white">AR</div>
+                      </div>
+                      {/* Status Indicator */}
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">OUR MISSION</h3>
-                  <p className="text-gray-700 leading-relaxed">
-                    To democratize career guidance and make expert mentorship accessible to every individual in India.
-                  </p>
+                  
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-white">ARJUN RAJESH</h3>
+                    <div className="inline-block bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] text-transparent bg-clip-text font-bold text-lg mb-4">
+                      CEO & Co-Founder
+                    </div>
+                    <p className="text-gray-300 leading-relaxed mb-6">
+                      Former McKinsey strategist architecting the future of career discovery through AI-driven insights.
+                    </p>
+                    
+                    {/* Skill Tags */}
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <span className="px-3 py-1 bg-[#FF6C4A]/20 text-[#FF6C4A] rounded-full text-sm border border-[#FF6C4A]/30">Strategy</span>
+                      <span className="px-3 py-1 bg-[#FF876B]/20 text-[#FF876B] rounded-full text-sm border border-[#FF876B]/30">Leadership</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <Rocket className="text-white" size={32} />
+              {/* Team Member 2 */}
+              <div className="group">
+                <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/30 hover:border-[#FF876B]/50 transition-all duration-500 hover:transform hover:scale-105">
+                  <div className="relative mb-8">
+                    <div className="w-32 h-32 mx-auto relative">
+                      <div className="absolute inset-0 rounded-full border-2 border-[#FF876B]/30 animate-spin"></div>
+                      <div className="absolute inset-2 bg-gradient-to-br from-[#FF876B] to-[#FFB6A5] rounded-full flex items-center justify-center">
+                        <div className="text-4xl font-bold text-white">PS</div>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">OUR VISION</h3>
-                  <p className="text-gray-700 leading-relaxed">
-                    To become India's most trusted platform where dreams meet opportunities and careers are born.
-                  </p>
+                  
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-white">PRIYA SHARMA</h3>
+                    <div className="inline-block bg-gradient-to-r from-[#FF876B] to-[#FFB6A5] text-transparent bg-clip-text font-bold text-lg mb-4">
+                      CTO & Co-Founder
+                    </div>
+                    <p className="text-gray-300 leading-relaxed mb-6">
+                      Ex-Google engineer crafting intelligent algorithms that match dreams with opportunities.
+                    </p>
+                    
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <span className="px-3 py-1 bg-[#FF876B]/20 text-[#FF876B] rounded-full text-sm border border-[#FF876B]/30">AI/ML</span>
+                      <span className="px-3 py-1 bg-[#FFB6A5]/20 text-[#FFB6A5] rounded-full text-sm border border-[#FFB6A5]/30">Engineering</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="text-center p-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <Shield className="text-white" size={32} />
+              {/* Team Member 3 */}
+              <div className="group">
+                <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/30 hover:border-[#FFB6A5]/50 transition-all duration-500 hover:transform hover:scale-105">
+                  <div className="relative mb-8">
+                    <div className="w-32 h-32 mx-auto relative">
+                      <div className="absolute inset-0 rounded-full border-2 border-[#FFB6A5]/30 animate-spin"></div>
+                      <div className="absolute inset-2 bg-gradient-to-br from-[#FFB6A5] to-[#FF6C4A] rounded-full flex items-center justify-center">
+                        <div className="text-4xl font-bold text-white">VK</div>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-gray-900 animate-pulse"></div>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">OUR VALUES</h3>
-                  <p className="text-gray-700 leading-relaxed">
-                    Integrity, empathy, innovation, and accessibility guide every decision we make.
-                  </p>
+                  
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-white">VIKRAM KUMAR</h3>
+                    <div className="inline-block bg-gradient-to-r from-[#FFB6A5] to-[#FF6C4A] text-transparent bg-clip-text font-bold text-lg mb-4">
+                      Head of Mentorship
+                    </div>
+                    <p className="text-gray-300 leading-relaxed mb-6">
+                      Former Tata Group executive building bridges between industry experts and aspiring professionals.
+                    </p>
+                    
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <span className="px-3 py-1 bg-[#FFB6A5]/20 text-[#FFB6A5] rounded-full text-sm border border-[#FFB6A5]/30">Mentorship</span>
+                      <span className="px-3 py-1 bg-[#FF6C4A]/20 text-[#FF6C4A] rounded-full text-sm border border-[#FF6C4A]/30">Networks</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mission, Vision, Values */}
+        <section className="py-32 bg-gradient-to-b from-gray-900 to-[#151515] relative">
+          {/* Floating Particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-10 w-2 h-2 bg-[#FF6C4A] rounded-full animate-ping"></div>
+            <div className="absolute top-1/3 right-20 w-1 h-1 bg-[#FF876B] rounded-full animate-ping delay-300"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-[#FFB6A5] rounded-full animate-ping delay-700"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent">
+                OUR DNA
+              </h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] mx-auto"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Mission */}
+              <div className="group relative">
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FF6C4A]/50 transition-all duration-500 h-full">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#FF6C4A] to-[#FF876B] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Target className="text-white" size={40} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-6">MISSION</h3>
+                    <p className="text-gray-300 leading-relaxed text-lg">
+                      Democratize career guidance through AI-powered insights, making expert mentorship accessible to every dreamer across India.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vision */}
+              <div className="group relative">
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FF876B]/50 transition-all duration-500 h-full">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#FF876B] to-[#FFB6A5] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Rocket className="text-white" size={40} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-6">VISION</h3>
+                    <p className="text-gray-300 leading-relaxed text-lg">
+                      Transform India into a nation where every individual discovers their true calling and builds meaningful careers.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Values */}
+              <div className="group relative">
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FFB6A5]/50 transition-all duration-500 h-full">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#FFB6A5] to-[#FF6C4A] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Heart className="text-white" size={40} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-6">VALUES</h3>
+                    <p className="text-gray-300 leading-relaxed text-lg">
+                      Innovation, empathy, accessibility, and integrity drive every decision in our quest to transform lives.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -196,58 +248,125 @@ export default function AboutUsPage({ onBack }) {
         </section>
 
         {/* Impact Stats */}
-        <section className="py-24 bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
-          {/* Animated background elements */}
+        <section className="py-32 bg-gradient-to-r from-[#151515] via-gray-900 to-[#151515] relative overflow-hidden">
+          {/* Data Visualization Background */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-20 left-10 w-40 h-40 bg-[#FF6C4A] rounded-full animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-32 h-32 bg-yellow-400 rounded-full animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-blue-400 rounded-full animate-pulse delay-500"></div>
+            <div className="absolute top-0 left-0 w-full h-full">
+              {/* Simulated data lines */}
+              <svg className="w-full h-full" viewBox="0 0 1000 400" fill="none">
+                <path d="M0,200 Q250,100 500,150 T1000,100" stroke="url(#gradient1)" strokeWidth="2" />
+                <path d="M0,250 Q250,180 500,200 T1000,150" stroke="url(#gradient2)" strokeWidth="2" />
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FF6C4A" />
+                    <stop offset="100%" stopColor="#FF876B" />
+                  </linearGradient>
+                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FF876B" />
+                    <stop offset="100%" stopColor="#FFB6A5" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold mb-6">OUR IMPACT</h2>
-              <p className="text-2xl text-gray-300 font-light">Numbers that tell our story</p>
+            <div className="text-center mb-20">
+              <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent">
+                IMPACT METRICS
+              </h2>
+              <p className="text-2xl text-gray-300 font-light">Data-driven success stories</p>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
-                <div className="text-6xl font-bold text-[#FF6C4A] mb-4 group-hover:scale-110 transition-transform">5000+</div>
-                <div className="text-xl text-gray-300 uppercase tracking-wide">Dreams Guided</div>
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FF6C4A]/50 transition-all duration-300">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform">
+                    15K+
+                  </div>
+                  <div className="text-lg text-gray-300 uppercase tracking-wide">Careers Transformed</div>
+                </div>
               </div>
+              
               <div className="group">
-                <div className="text-6xl font-bold text-yellow-400 mb-4 group-hover:scale-110 transition-transform">500+</div>
-                <div className="text-xl text-gray-300 uppercase tracking-wide">Expert Mentors</div>
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FF876B]/50 transition-all duration-300">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-[#FF876B] to-[#FFB6A5] bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform">
+                    1K+
+                  </div>
+                  <div className="text-lg text-gray-300 uppercase tracking-wide">Expert Mentors</div>
+                </div>
               </div>
+              
               <div className="group">
-                <div className="text-6xl font-bold text-green-400 mb-4 group-hover:scale-110 transition-transform">98%</div>
-                <div className="text-xl text-gray-300 uppercase tracking-wide">Success Rate</div>
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FFB6A5]/50 transition-all duration-300">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-[#FFB6A5] to-[#FF6C4A] bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform">
+                    99%
+                  </div>
+                  <div className="text-lg text-gray-300 uppercase tracking-wide">Success Rate</div>
+                </div>
               </div>
+              
               <div className="group">
-                <div className="text-6xl font-bold text-blue-400 mb-4 group-hover:scale-110 transition-transform">50+</div>
-                <div className="text-xl text-gray-300 uppercase tracking-wide">Career Domains</div>
+                <div className="bg-gradient-to-b from-gray-800/30 to-gray-900/30 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/20 hover:border-[#FF6C4A]/50 transition-all duration-300">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform">
+                    100+
+                  </div>
+                  <div className="text-lg text-gray-300 uppercase tracking-wide">Career Domains</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="py-24 bg-gradient-to-r from-[#FF6C4A] via-red-500 to-pink-500 text-white relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute top-10 left-10 w-20 h-20 border-4 border-white/20 rounded-full"></div>
-          <div className="absolute bottom-10 right-10 w-32 h-32 border-4 border-white/20 rounded-full"></div>
-          <div className="absolute top-1/2 left-20 w-16 h-16 border-4 border-white/20 rounded-full"></div>
+        {/* CTA Section */}
+        <section className="py-32 bg-gradient-to-br from-[#FF6C4A] via-[#FF876B] to-[#FFB6A5] relative overflow-hidden">
+          {/* Geometric Patterns */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 w-32 h-32 border-4 border-white rounded-full"></div>
+            <div className="absolute bottom-20 right-20 w-24 h-24 border-4 border-white rotate-45"></div>
+            <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full"></div>
+            <div className="absolute bottom-1/3 right-1/3 w-20 h-20 border-4 border-white rounded-full"></div>
+          </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 className="text-5xl font-bold mb-8">READY TO FIND YOUR PATH?</h2>
-            <p className="text-2xl mb-12 max-w-4xl mx-auto font-light leading-relaxed">
-              Join thousands of individuals who have discovered their dream careers with GUIDO's personalized guidance and expert mentorship.
-            </p>
-            <button className="bg-white text-[#FF6C4A] px-12 py-6 rounded-full text-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-xl">
-              START YOUR JOURNEY
-            </button>
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-6xl font-bold mb-8 text-white">
+                READY TO SHAPE YOUR FUTURE?
+              </h2>
+              <p className="text-2xl mb-12 text-white/90 font-light leading-relaxed">
+                Join the revolution. Discover your true potential with AI-powered career guidance and connect with industry-leading mentors who will transform your professional journey.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button className="group bg-white text-[#FF6C4A] px-10 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-2xl border-2 border-transparent hover:border-white/20">
+                  <span className="flex items-center">
+                    START YOUR JOURNEY
+                    <Rocket className="ml-2 group-hover:translate-x-1 transition-transform" size={24} />
+                  </span>
+                </button>
+                
+                <button className="group bg-transparent text-white px-10 py-5 rounded-full text-xl font-bold border-2 border-white hover:bg-white hover:text-[#FF6C4A] transition-all duration-300 hover:scale-105">
+                  <span className="flex items-center">
+                    EXPLORE FEATURES
+                    <TrendingUp className="ml-2 group-hover:translate-x-1 transition-transform" size={24} />
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="py-16 bg-[#151515] border-t border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="text-5xl font-bold bg-gradient-to-r from-[#FF6C4A] to-[#FF876B] bg-clip-text text-transparent mb-4">
+              GUIDO
+            </div>
+            <p className="text-gray-400 text-lg">
+              Empowering careers. Enabling dreams. Transforming futures.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
