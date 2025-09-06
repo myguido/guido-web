@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowRight, Mail, Phone, MapPin, Send, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail, Phone, Send, Sparkles } from 'lucide-react';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({

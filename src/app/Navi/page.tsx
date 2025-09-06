@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Send, Mic, Plus, User, Menu, X, Home, Navigation, Users, Briefcase, Sparkles, MessageSquare, Trash2, Settings } from 'lucide-react';
+import { Send, Mic, Plus, User, X, Home, Navigation, Users, Briefcase, Sparkles, MessageSquare, Trash2, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 // Navbar Component (unchanged as requested)
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
 
