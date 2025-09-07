@@ -53,7 +53,7 @@ interface Mentor {
 interface Category {
   name: string;
   count: number;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   color: string;
 }
 
@@ -78,7 +78,7 @@ interface MentorSliderProps {
   title: string;
   likedMentors: Set<number>;
   toggleLike: (mentorId: number) => void;
-  icon: JSX.Element;
+  icon: React.ReactElement;
 }
 
 // Career Counsellors
