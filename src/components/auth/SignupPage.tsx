@@ -137,7 +137,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
       setShowSuccessMessage(true);
 
       // Call success callback if provided
-      if (onSignupSuccess) {
+      if (onSignupSuccess && data.user) {
         onSignupSuccess(data.user);
       }
 
