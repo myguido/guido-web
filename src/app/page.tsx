@@ -42,15 +42,17 @@ function TestimonialSlider() {
     },
   }, [
     (slider) => {
-      let timeout
+      let timeout: NodeJS.Timeout | undefined
       let mouseOver = false
       
       function clearNextTimeout() {
-        clearTimeout(timeout)
+        if (timeout) {
+          clearTimeout(timeout)
+        }
       }
       
       function nextTimeout() {
-        clearTimeout(timeout)
+        clearNextTimeout()
         if (mouseOver) return
         timeout = setTimeout(() => {
           slider.next()
@@ -154,7 +156,7 @@ function PublicHomePage() {
   const [showCareers, setShowCareers] = useState(false);
 
   // Handle successful authentication
-  const handleAuthSuccess = (user, mode) => {
+  const handleAuthSuccess = (user: any, mode: string) => {
     console.log(`${mode} successful:`, user);
     setIsAuthModalOpen(false);
   };
@@ -237,7 +239,7 @@ function PublicHomePage() {
               },
               {
                 title: "Real Mentors",
-                desc: "Engage in meaningful conversations with professionals who&apos;ve navigated similar career paths and are here to help you succeed.",
+                desc: "Engage in meaningful conversations with professionals who've navigated similar career paths and are here to help you succeed.",
                 icon: <Users size={28} className="text-[#FF6C4A] mx-auto mb-4" />,
               },
               {
@@ -252,7 +254,7 @@ function PublicHomePage() {
               },
               {
                 title: "24/7 Support",
-                desc: "Whenever you&apos;re stuck or need motivation, we&apos;re here. Chat support, community forums, and mentor messaging—available round the clock.",
+                desc: "Whenever you're stuck or need motivation, we're here. Chat support, community forums, and mentor messaging—available round the clock.",
                 icon: <LifeBuoy size={28} className="text-[#FF6C4A] mx-auto mb-4" />,
               },
               {
@@ -289,7 +291,7 @@ function PublicHomePage() {
                 </p>
 
                 <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                  GUIDO&apos;s process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
+                  GUIDO's process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
                 </p>
 
                 <ul className="space-y-4 mt-6">
@@ -372,7 +374,7 @@ function PublicHomePage() {
                 {
                   title: "24/7 Support",
                   description:
-                    "We&apos;re with you throughout your journey — whether you need help, motivation, or advice.",
+                    "We're with you throughout your journey — whether you need help, motivation, or advice.",
                   features: ["Live Chat", "Email Support", "Always Available"]
                 }
               ].map((service, index) => (
