@@ -37,16 +37,48 @@ import {
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 
+interface Message {
+  id: number;
+  text: string;
+  sender: 'user' | 'counsellor';
+  timestamp: string;
+}
+
+interface Counsellor {
+  id: number;
+  name: string;
+  title: string;
+  specialization: string;
+  experience: string;
+  rating: number;
+  reviews: number;
+  location: string;
+  languages: string[];
+  price: string;
+  priceLabel: string;
+  availability: string;
+  image: string;
+  sessions: number;
+  category: string;
+  isOnline: boolean;
+  responseTime: string;
+  successRate: number;
+  bio: string;
+  education: string;
+  certifications: string[];
+  achievements: string[];
+}
+
 const CounsellorsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedCounsellor, setSelectedCounsellor] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [selectedCounsellor, setSelectedCounsellor] = useState<Counsellor | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [favorites, setFavorites] = useState(new Set());
-  const messagesEndRef = useRef(null);
+  const [favorites, setFavorites] = useState(new Set<number>());
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const categories = [
     { id: 'all', label: 'All Experts', count: 24, icon: Users },
@@ -57,7 +89,7 @@ const CounsellorsPage = () => {
     { id: 'wellness', label: 'Career Wellness', count: 2, icon: Shield }
   ];
 
-  const counsellors = [
+  const counsellors: Counsellor[] = [
     {
       id: 1,
       name: "Dr. Priya Sharma",
@@ -211,7 +243,7 @@ const CounsellorsPage = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = (id: number) => {
     const newFavorites = new Set(favorites);
     if (newFavorites.has(id)) {
       newFavorites.delete(id);
@@ -221,13 +253,13 @@ const CounsellorsPage = () => {
     setFavorites(newFavorites);
   };
 
-  const openChat = (counsellor) => {
+  const openChat = (counsellor: Counsellor) => {
     setSelectedCounsellor(counsellor);
     setIsChatOpen(true);
     setMessages([
       {
         id: 1,
-        text: `Hi! I&apos;m ${counsellor.name}. I&apos;m excited to help you with your career journey. What specific challenge or goal would you like to work on today?`,
+        text: `Hi! I'm ${counsellor.name}. I'm excited to help you with your career journey. What specific challenge or goal would you like to work on today?`,
         sender: 'counsellor',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
@@ -243,7 +275,7 @@ const CounsellorsPage = () => {
 
   const sendMessage = () => {
     if (newMessage.trim()) {
-      const userMessage = {
+      const userMessage: Message = {
         id: messages.length + 1,
         text: newMessage,
         sender: 'user',
@@ -256,12 +288,12 @@ const CounsellorsPage = () => {
       setTimeout(() => {
         const responses = [
           "I understand your concern. Let me share some strategic insights that could help you navigate this situation effectively.",
-          "That&apos;s a great question! Based on my experience with similar cases, here&apos;s what I&apos;d recommend...",
-          "I appreciate you sharing that with me. Let&apos;s work together to create a personalized action plan.",
-          "Your situation is quite common, and there are proven strategies we can implement. Here&apos;s my approach..."
+          "That's a great question! Based on my experience with similar cases, here's what I'd recommend...",
+          "I appreciate you sharing that with me. Let's work together to create a personalized action plan.",
+          "Your situation is quite common, and there are proven strategies we can implement. Here's my approach..."
         ];
         
-        const counsellorResponse = {
+        const counsellorResponse: Message = {
           id: messages.length + 2,
           text: responses[Math.floor(Math.random() * responses.length)],
           sender: 'counsellor',
@@ -272,7 +304,7 @@ const CounsellorsPage = () => {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -534,7 +566,7 @@ const CounsellorsPage = () => {
               Ready to Transform Your Career?
             </h2>
             <p className="text-white/90 text-xl mb-10 leading-relaxed max-w-3xl mx-auto">
-              Join thousands of professionals who&apos;ve already accelerated their careers with our expert guidance. Your dream career is just one conversation away.
+              Join thousands of professionals who have already accelerated their careers with our expert guidance. Your dream career is just one conversation away.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -758,7 +790,7 @@ const CounsellorsPage = () => {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
-                  { text: "I&apos;d like to explore career opportunities in my field", label: "Career Opportunities" },
+                  { text: "I'd like to explore career opportunities in my field", label: "Career Opportunities" },
                   { text: "Can you help me create a standout resume?", label: "Resume Building" },
                   { text: "What skills should I develop for career growth?", label: "Skill Development" },
                   { text: "I need guidance on salary negotiation", label: "Salary Strategy" }
