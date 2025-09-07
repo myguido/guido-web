@@ -9,16 +9,27 @@ interface ProtectedRouteProps {
   fallback?: React.ReactNode;
 }
 
+interface AuthData {
+  user?: any;
+  loading?: boolean;
+  isAuthenticated?: boolean;
+}
+
 export default function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
-  const authData = useAuth();
-  
-  // Type guard to ensure authData has the expected properties
-  const hasAuthData = authData && typeof authData === 'object' && 'user' in authData;
-  
-  // Add safety checks for the auth data with type assertion
-  const user = hasAuthData ? (authData as any).user : null;
-  const loading = hasAuthData ? (authData as any).loading || false : false;
-  const isAuthenticated = hasAuthData ? (authData as any).isAuthenticated || false : false;
+  let authData: AuthData;
+  let user = null;
+  let loading = false;
+  let isAuthenticated = false;
+
+  try {
+    authData = useAuth() as AuthData;
+    user = authData?.user || null;
+    loading = authData?.loading || false;
+    isAuthenticated = authData?.isAuthenticated || false;
+  } catch (error) {
+    console.error('Error accessing auth context:', error);
+    // Fallback values are already set above
+  }
 
   // Show loading state while checking authentication
   if (loading) {
@@ -31,7 +42,17 @@ export default function ProtectedRoute({ children, fallback }: ProtectedRoutePro
 
   // If not authenticated, show auth form or fallback
   if (!isAuthenticated) {
-    return fallback || <AuthManager isModal={false} initialMode="login" />;
+    return fallback || (
+      <AuthManager 
+        isModal={false} 
+        initialMode="login"
+        onClose={() => {}} 
+        onAuthSuccess={() => {
+          // Refresh or redirect after successful authentication
+          window.location.reload();
+        }}
+      />
+    );
   }
 
   // If authenticated, render the protected content
