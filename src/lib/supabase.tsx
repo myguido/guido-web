@@ -1,4 +1,4 @@
-// lib/supabase.js
+// lib/supabase.tsx
 import { createClient } from '@supabase/supabase-js'
 
 // Replace with your actual Supabase project URL and anon key
@@ -10,7 +10,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 // Helper functions for authentication
 export const authHelpers = {
   // Sign up a new user
-  signUp: async (email, password, firstName, lastName) => {
+  signUp: async (email: string, password: string, firstName: string, lastName: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -37,7 +37,7 @@ export const authHelpers = {
   },
 
   // Sign in an existing user
-  signIn: async (email, password) => {
+  signIn: async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -74,7 +74,7 @@ export const authHelpers = {
   },
 
   // Reset password
-  resetPassword: async (email) => {
+  resetPassword: async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
@@ -93,7 +93,7 @@ export const authHelpers = {
   },
 
   // Update password (for authenticated users)
-  updatePassword: async (newPassword) => {
+  updatePassword: async (newPassword: string) => {
     try {
       const { error } = await supabase.auth.updateUser({
         password: newPassword
@@ -112,7 +112,7 @@ export const authHelpers = {
   },
 
   // Update user profile
-  updateProfile: async (updates) => {
+  updateProfile: async (updates: any) => {
     try {
       const { error } = await supabase.auth.updateUser({
         data: updates
@@ -168,7 +168,7 @@ export const authHelpers = {
 // Database helper functions (for when you add database tables)
 export const dbHelpers = {
   // Create user profile in database
-  createUserProfile: async (userId, profileData) => {
+  createUserProfile: async (userId: string, profileData: any) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -195,7 +195,7 @@ export const dbHelpers = {
   },
 
   // Get user profile from database
-  getUserProfile: async (userId) => {
+  getUserProfile: async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -216,7 +216,7 @@ export const dbHelpers = {
   },
 
   // Update user profile in database
-  updateUserProfile: async (userId, updates) => {
+  updateUserProfile: async (userId: string, updates: any) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -243,7 +243,7 @@ export const dbHelpers = {
 // Utility functions
 export const utils = {
   // Format user display name
-  formatUserName: (user) => {
+  formatUserName: (user: any) => {
     if (user?.user_metadata?.firstName && user?.user_metadata?.lastName) {
       return `${user.user_metadata.firstName} ${user.user_metadata.lastName}`
     }
@@ -257,12 +257,12 @@ export const utils = {
   },
 
   // Check if user email is verified
-  isEmailVerified: (user) => {
+  isEmailVerified: (user: any) => {
     return user?.email_confirmed_at !== null
   },
 
   // Get user initials for avatar
-  getUserInitials: (user) => {
+  getUserInitials: (user: any) => {
     const name = utils.formatUserName(user)
     return name
       .split(' ')
@@ -272,10 +272,10 @@ export const utils = {
   },
 
   // Handle Supabase errors with user-friendly messages
-  getErrorMessage: (error) => {
+  getErrorMessage: (error: any) => {
     if (!error) return null
     
-    const errorMessages = {
+    const errorMessages: { [key: string]: string } = {
       'Invalid login credentials': 'Invalid email or password. Please try again.',
       'Email not confirmed': 'Please check your email and confirm your account before signing in.',
       'User already registered': 'An account with this email already exists. Please sign in instead.',
