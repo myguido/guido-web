@@ -11,9 +11,10 @@ import AuthManager from '../components/auth/AuthManager';
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
   const pathname = usePathname();
-  const { user, loading, signOut } = useAuth(); // Using the same pattern as home page
+  const { user, loading, signOut } = useAuth();
 
   // Memoize navigation items with icons for bottom nav
   const navItems = useMemo(() => [
@@ -46,12 +47,28 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await signOut();
+      setIsProfileDropdownOpen(false);
       console.log('User signed out successfully');
     } catch (error) {
       console.error('Error signing out:', error);
       alert('Error signing out. Please try again.');
     }
   };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.profile-dropdown')) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -100,7 +117,7 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Desktop Navigation with Pill Styling - Only show if authenticated */}
+            {/* Desktop Navigation with Pill Styling - Always show if authenticated */}
             {user && (
               <div className="flex items-center">
                 <div className="flex bg-[#1F1F1F] border border-gray-600 rounded-lg px-2 py-1 space-x-2">
@@ -121,30 +138,71 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Auth Buttons */}
+            {/* Right Section - Auth Buttons or User Profile */}
             <div className="flex items-center space-x-3">
               {user ? (
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
+                /* User Profile Section */
+                <div className="relative profile-dropdown">
+                  <button
+                    onClick={toggleProfileDropdown}
+                    className="flex items-center space-x-2 bg-[#1F1F1F] hover:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 transition-all"
+                  >
                     <div className="w-8 h-8 bg-[#FF6C4A] rounded-full flex items-center justify-center">
                       <User size={16} className="text-white" />
                     </div>
                     <span className="text-white text-sm font-medium">
                       {user?.user_metadata?.firstName || 
                        user?.user_metadata?.first_name || 
+                       user?.user_metadata?.name || 
+                       user?.user_metadata?.full_name ||
                        user?.email?.split('@')[0] || 
                        'User'}
                     </span>
-                  </div>
-                  <button
-                    onClick={handleSignOut}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold shadow-md transition-all flex items-center space-x-2"
-                  >
-                    <LogOut size={16} />
-                    <span>Logout</span>
+                    <div className="text-gray-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </button>
+
+                  {/* Dropdown Menu */}
+                  {isProfileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-[#1F1F1F] border border-gray-600 rounded-lg shadow-lg py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-600">
+                        <p className="text-sm font-medium text-white">
+                          {user?.user_metadata?.firstName || 
+                           user?.user_metadata?.first_name || 
+                           user?.user_metadata?.name || 
+                           user?.user_metadata?.full_name ||
+                           'User'}
+                        </p>
+                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                      </div>
+                      
+                      <button
+                        onClick={() => {
+                          setIsProfileDropdownOpen(false);
+                          // Add profile navigation here if needed
+                          console.log('Navigate to profile');
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700 transition-all flex items-center space-x-2"
+                      >
+                        <Settings size={16} />
+                        <span>Profile Settings</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 transition-all flex items-center space-x-2"
+                      >
+                        <LogOut size={16} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
+                /* Auth Buttons - Only show when user is NOT logged in */
                 <>
                   <button
                     onClick={handleOpenLogin}
@@ -180,24 +238,64 @@ export default function Navbar() {
             />
           </Link>
           
-          {/* Auth Buttons or User Info */}
+          {/* Mobile Right Section */}
           <div className="flex items-center space-x-2">
             {loading ? (
               <div className="w-6 h-6 border-2 border-[#FF6C4A] border-t-transparent rounded-full animate-spin"></div>
             ) : user ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-[#FF6C4A] rounded-full flex items-center justify-center">
-                  <User size={14} className="text-white" />
-                </div>
+              /* Mobile User Profile */
+              <div className="relative profile-dropdown">
                 <button
-                  onClick={handleSignOut}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-semibold text-sm transition-all flex items-center space-x-1"
+                  onClick={toggleProfileDropdown}
+                  className="flex items-center space-x-2 bg-[#1F1F1F] hover:bg-gray-700 border border-gray-600 rounded-lg px-2 py-1 transition-all"
                 >
-                  <LogOut size={14} />
-                  <span>Logout</span>
+                  <div className="w-8 h-8 bg-[#FF6C4A] rounded-full flex items-center justify-center">
+                    <User size={14} className="text-white" />
+                  </div>
+                  <div className="text-gray-400">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
                 </button>
+
+                {/* Mobile Dropdown Menu */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-44 bg-[#1F1F1F] border border-gray-600 rounded-lg shadow-lg py-2 z-50">
+                    <div className="px-3 py-2 border-b border-gray-600">
+                      <p className="text-sm font-medium text-white truncate">
+                        {user?.user_metadata?.firstName || 
+                         user?.user_metadata?.first_name || 
+                         user?.user_metadata?.name || 
+                         user?.user_metadata?.full_name ||
+                         'User'}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setIsProfileDropdownOpen(false);
+                        console.log('Navigate to profile');
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 transition-all flex items-center space-x-2"
+                    >
+                      <Settings size={14} />
+                      <span>Profile</span>
+                    </button>
+                    
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-gray-700 transition-all flex items-center space-x-2"
+                    >
+                      <LogOut size={14} />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
+              /* Mobile Auth Buttons - Only show when user is NOT logged in */
               <>
                 <button
                   onClick={handleOpenLogin}
@@ -218,7 +316,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Only show if authenticated */}
+      {/* Mobile Bottom Navigation - Always show if authenticated */}
       {user && (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#151515] border-t border-gray-700 z-50">
           <div className="flex justify-around items-center py-2">
@@ -244,12 +342,6 @@ export default function Navbar() {
           </div>
         </nav>
       )}
-
-      {/* Add padding to body content for mobile top bar */}
-      <div className="md:hidden h-16"></div>
-      
-      {/* Add padding for mobile bottom navigation only if user is authenticated */}
-      {user && <div className="md:hidden h-16 fixed bottom-0 w-full pointer-events-none"></div>}
 
       {/* Auth Modal */}
       {isAuthModalOpen && (

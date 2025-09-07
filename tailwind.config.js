@@ -6,7 +6,13 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'sans': ['Helvetica', 'Arial', 'sans-serif'], // Primary font - replaces default sans
+        'display': ['ITC Garamond', 'Times New Roman', 'serif'], // Secondary/Display font
+        'serif': ['ITC Garamond', 'Times New Roman', 'serif'], // Also replaces default serif
+      },
+    },
   },
   plugins: [],
 }

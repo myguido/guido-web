@@ -11,6 +11,7 @@ import AboutUsPage from '../components/AboutUsPage';
 import CareersPage from '../components/CareersPage';
 import ContactPage from '../components/ContactPage';
 import AuthManager from '../components/auth/AuthManager';
+import AuthenticatedDashboard from './AuthenticatedDashboard';
 import { AuthProvider, useAuth } from '../components/auth/AuthProvider';
 import {
   UserCheck,
@@ -19,146 +20,6 @@ import {
   LifeBuoy,
   Wallet,
 } from "lucide-react"
-
-// Authenticated Home Dashboard Component
-function AuthenticatedHome({ user }) {
-  return (
-    <div className="min-h-screen bg-[#151515] pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Welcome Section */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Welcome back, {user?.user_metadata?.firstName || 'there'}! 👋
-          </h1>
-          <p className="text-xl text-gray-300">
-            Ready to continue your career journey?
-          </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Mentorship Sessions</p>
-                <p className="text-2xl font-bold text-white">12</p>
-              </div>
-              <div className="w-12 h-12 bg-[#FF6C4A]/20 rounded-lg flex items-center justify-center">
-                <Users className="text-[#FF6C4A]" size={24} />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Workshops Attended</p>
-                <p className="text-2xl font-bold text-white">8</p>
-              </div>
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <CalendarCheck className="text-green-500" size={24} />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Goals Completed</p>
-                <p className="text-2xl font-bold text-white">15</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="text-blue-500" size={24} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Current Goals */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-            <h3 className="text-xl font-semibold text-white mb-4">Current Goals</h3>
-            <div className="space-y-4">
-              {[
-                { title: "Complete React Development Course", progress: 75 },
-                { title: "Schedule Mock Interview", progress: 50 },
-                { title: "Update LinkedIn Profile", progress: 90 }
-              ].map((goal, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <p className="text-gray-300 text-sm">{goal.title}</p>
-                    <span className="text-xs text-gray-400">{goal.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-[#FF6C4A] h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${goal.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Sessions */}
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-            <h3 className="text-xl font-semibold text-white mb-4">Upcoming Sessions</h3>
-            <div className="space-y-4">
-              {[
-                { 
-                  mentor: "Sarah Johnson", 
-                  topic: "Career Planning", 
-                  date: "Today, 3:00 PM",
-                  type: "1-on-1 Mentorship"
-                },
-                { 
-                  mentor: "Workshop Team", 
-                  topic: "Resume Building", 
-                  date: "Tomorrow, 11:00 AM",
-                  type: "Group Workshop"
-                }
-              ].map((session, index) => (
-                <div key={index} className="p-4 bg-[#151515] rounded-lg border border-gray-600">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium text-white">{session.topic}</h4>
-                    <span className="text-xs bg-[#FF6C4A] text-white px-2 py-1 rounded">
-                      {session.type}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-400">with {session.mentor}</p>
-                  <p className="text-xs text-[#FF6C4A] mt-1">{session.date}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-          <h3 className="text-xl font-semibold text-white mb-6">Quick Actions</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: "Book Session", icon: <CalendarCheck size={20} /> },
-              { title: "Join Workshop", icon: <Users size={20} /> },
-              { title: "View Progress", icon: <TrendingUp size={20} /> },
-              { title: "Get Support", icon: <LifeBuoy size={20} /> }
-            ].map((action, index) => (
-              <button
-                key={index}
-                className="p-4 bg-[#151515] rounded-lg border border-gray-600 hover:border-[#FF6C4A] transition-colors text-center group"
-              >
-                <div className="text-[#FF6C4A] group-hover:text-white mb-2 flex justify-center">
-                  {action.icon}
-                </div>
-                <p className="text-sm text-gray-300 group-hover:text-white">{action.title}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // Testimonial Slider Component
 function TestimonialSlider() {
@@ -692,7 +553,7 @@ function HomeContent() {
     return (
       <div className="min-h-screen bg-[#151515]">
         <Navbar />
-        <AuthenticatedHome user={user} />
+        <AuthenticatedDashboard user={user} />
       </div>
     );
   }
