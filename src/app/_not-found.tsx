@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { headers } from 'next/headers';
 
 export default async function NotFound() {
-  const heads = headers();
+  const heads = await headers();
   const path = heads.get('x-invoke-path') || 'Page';
 
   return (
