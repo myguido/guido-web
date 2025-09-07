@@ -102,9 +102,9 @@ export default function LoginPage({ onClose, onSwitchToSignup, isModal = false, 
       console.log('User logged in:', data.user);
       
       if (formData.rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
+        sessionStorage.setItem('rememberMe', 'true');
       } else {
-        localStorage.removeItem('rememberMe');
+        sessionStorage.removeItem('rememberMe');
       }
 
       if (onLoginSuccess) {
@@ -151,7 +151,7 @@ export default function LoginPage({ onClose, onSwitchToSignup, isModal = false, 
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+              className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all text-gray-900 ${
                 errors.email ? 'ring-2 ring-red-200 bg-red-50/50' : ''
               }`}
               placeholder="Enter your email"
@@ -173,7 +173,7 @@ export default function LoginPage({ onClose, onSwitchToSignup, isModal = false, 
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+                className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all text-gray-900 ${
                   errors.password ? 'ring-2 ring-red-200 bg-red-50/50' : ''
                 }`}
                 placeholder="Enter your password"
