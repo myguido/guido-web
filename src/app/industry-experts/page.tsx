@@ -42,18 +42,77 @@ import {
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 
-const IndustryExpertsPage = () => {
-  const [selectedIndustry, setSelectedIndustry] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('experts');
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedExpert, setSelectedExpert] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [favorites, setFavorites] = useState(new Set());
-  const messagesEndRef = useRef(null);
+// Type definitions
+type BadgeType = 'Industry Leader' | 'Tech Leader' | 'Global Expert' | 'Medical Expert' | 'Entrepreneur' | 'Pioneer';
 
-  const industries = [
+interface Expert {
+  id: number;
+  name: string;
+  title: string;
+  company: string;
+  industry: string;
+  experience: string;
+  rating: number;
+  reviews: number;
+  specialization: string;
+  location: string;
+  languages: string[];
+  price: string;
+  priceLabel: string;
+  availability: string;
+  image: string;
+  badge?: BadgeType;
+  achievements: string[];
+  sessions: number;
+  topics: string[];
+  bio: string;
+  nextAvailable: string;
+  isOnline: boolean;
+  responseTime: string;
+  successRate: number;
+  education: string;
+  certifications: string[];
+  category: string;
+}
+
+interface Industry {
+  id: string;
+  label: string;
+  count: number;
+  icon: any;
+}
+
+interface Event {
+  id: number;
+  title: string;
+  expert: string;
+  date: string;
+  time: string;
+  type: string;
+  attendees: number;
+  price: string;
+  image: string;
+}
+
+interface Message {
+  id: number;
+  text: string;
+  sender: 'user' | 'expert';
+  timestamp: string;
+}
+
+const IndustryExpertsPage = () => {
+  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('experts');
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState<string>('');
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const industries: Industry[] = [
     { id: 'all', label: 'All Industries', count: 35, icon: Building2 },
     { id: 'tech', label: 'Technology', count: 12, icon: TrendingUp },
     { id: 'finance', label: 'Finance & Banking', count: 8, icon: Trophy },
@@ -62,7 +121,7 @@ const IndustryExpertsPage = () => {
     { id: 'consulting', label: 'Consulting', count: 4, icon: Award }
   ];
 
-  const experts = [
+  const experts: Expert[] = [
     {
       id: 1,
       name: "Sundar Pichai",
@@ -82,7 +141,7 @@ const IndustryExpertsPage = () => {
       achievements: ["CEO of Fortune 500", "Tech Visionary", "Leadership Expert"],
       sessions: 45,
       topics: ["Leadership", "Product Strategy", "Tech Innovation", "Team Building"],
-      bio: "Leading one of the world&apos;s most innovative companies, bringing deep insights into tech leadership and strategic thinking.",
+      bio: "Leading one of the world's most innovative companies, bringing deep insights into tech leadership and strategic thinking.",
       nextAvailable: "Next Week",
       isOnline: true,
       responseTime: "< 30 min",
@@ -107,7 +166,6 @@ const IndustryExpertsPage = () => {
       priceLabel: "per session",
       availability: "Available This Week",
       image: "https://images.unsplash.com/photo-1494790108755-2616b332336c?w=150&h=150&fit=crop&crop=face",
-     
       achievements: ["Engineering Excellence", "Diversity Advocate", "Mentor of 100+"],
       sessions: 234,
       topics: ["Software Architecture", "Engineering Management", "Career Growth", "Technical Skills"],
@@ -227,18 +285,18 @@ const IndustryExpertsPage = () => {
       achievements: ["Biotech Pioneer", "Women Leadership", "Innovation Leader"],
       sessions: 56,
       topics: ["Biotechnology", "Women in Leadership", "Innovation", "Entrepreneurship"],
-      bio: "Pioneering biotechnology entrepreneur and advocate for women&apos;s leadership in science and business.",
+      bio: "Pioneering biotechnology entrepreneur and advocate for women's leadership in science and business.",
       nextAvailable: "Next Month",
       isOnline: false,
       responseTime: "< 4 hours",
       successRate: 96,
-      education: "Bachelor&apos;s in Zoology, Bangalore University",
+      education: "Bachelor's in Zoology, Bangalore University",
       certifications: ["Biotech Pioneer", "Women Leadership Advocate", "Innovation Expert"],
       category: "healthcare"
     }
   ];
 
-  const upcomingEvents = [
+  const upcomingEvents: Event[] = [
     {
       id: 1,
       title: "Tech Leadership Masterclass",
@@ -282,7 +340,7 @@ const IndustryExpertsPage = () => {
     return matchesIndustry && matchesSearch;
   });
 
-  const getBadgeColor = (badge) => {
+  const getBadgeColor = (badge?: BadgeType): string => {
     switch (badge) {
       case 'Industry Leader': return 'bg-gradient-to-r from-purple-600 to-purple-800';
       case 'Tech Leader': return 'bg-gradient-to-r from-blue-600 to-blue-800';
@@ -294,7 +352,7 @@ const IndustryExpertsPage = () => {
     }
   };
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = (id: number): void => {
     const newFavorites = new Set(favorites);
     if (newFavorites.has(id)) {
       newFavorites.delete(id);
@@ -304,29 +362,29 @@ const IndustryExpertsPage = () => {
     setFavorites(newFavorites);
   };
 
-  const openChat = (expert) => {
+  const openChat = (expert: Expert): void => {
     setSelectedExpert(expert);
     setIsChatOpen(true);
     setMessages([
       {
         id: 1,
-        text: `Hi! I&apos;m ${expert.name}. I&apos;m excited to share my industry experience with you. What specific challenge or goal would you like to discuss today?`,
+        text: `Hi! I'm ${expert.name}. I'm excited to share my industry experience with you. What specific challenge or goal would you like to discuss today?`,
         sender: 'expert',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
   };
 
-  const closeChat = () => {
+  const closeChat = (): void => {
     setIsChatOpen(false);
     setSelectedExpert(null);
     setMessages([]);
     setNewMessage('');
   };
 
-  const sendMessage = () => {
+  const sendMessage = (): void => {
     if (newMessage.trim()) {
-      const userMessage = {
+      const userMessage: Message = {
         id: messages.length + 1,
         text: newMessage,
         sender: 'user',
@@ -338,13 +396,13 @@ const IndustryExpertsPage = () => {
       
       setTimeout(() => {
         const responses = [
-          "That&apos;s an excellent question. Based on my experience in the industry, here&apos;s what I&apos;ve learned...",
-          "I&apos;ve faced similar challenges throughout my career. Let me share some strategic insights that could help you.",
-          "From my perspective as an industry leader, I&apos;d recommend focusing on these key areas...",
-          "That&apos;s a common concern I hear from professionals. Here&apos;s how I approach this challenge..."
+          "That's an excellent question. Based on my experience in the industry, here's what I've learned...",
+          "I've faced similar challenges throughout my career. Let me share some strategic insights that could help you.",
+          "From my perspective as an industry leader, I'd recommend focusing on these key areas...",
+          "That's a common concern I hear from professionals. Here's how I approach this challenge..."
         ];
         
-        const expertResponse = {
+        const expertResponse: Message = {
           id: messages.length + 2,
           text: responses[Math.floor(Math.random() * responses.length)],
           sender: 'expert',
@@ -355,7 +413,7 @@ const IndustryExpertsPage = () => {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -390,7 +448,7 @@ const IndustryExpertsPage = () => {
               
               <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-8">
                 Get exclusive access to leaders, founders, and visionaries who are shaping the future. 
-                Learn directly from those who&apos;ve built billion-dollar companies and transformed industries.
+                Learn directly from those who've built billion-dollar companies and transformed industries.
               </p>
             </div>
 
@@ -499,7 +557,7 @@ const IndustryExpertsPage = () => {
                     {/* Header with badge and favorite */}
                     <div className="flex justify-between items-start mb-4">
                       <div className={`${getBadgeColor(expert.badge)} text-white text-xs px-3 py-1 rounded-full font-medium`}>
-                        {expert.badge}
+                        {expert.badge || 'Expert'}
                       </div>
                       <button 
                         onClick={() => toggleFavorite(expert.id)}
@@ -781,7 +839,7 @@ const IndustryExpertsPage = () => {
                 </div>
                 
                 <div className={`${getBadgeColor(selectedExpert.badge)} text-white text-xs px-2 py-1 rounded-full font-medium mb-2 inline-block`}>
-                  {selectedExpert.badge}
+                  {selectedExpert.badge || 'Expert'}
                 </div>
                 
                 <h4 className="text-sm font-bold text-white mb-1">{selectedExpert.name}</h4>
@@ -1015,7 +1073,7 @@ const IndustryExpertsPage = () => {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
-                  { text: "What&apos;s your advice for breaking into your industry?", label: "Industry Entry" },
+                  { text: "What's your advice for breaking into your industry?", label: "Industry Entry" },
                   { text: "Can you share insights about leadership in your field?", label: "Leadership" },
                   { text: "What trends should I watch in your industry?", label: "Industry Trends" },
                   { text: "How do you approach innovation and strategy?", label: "Strategy" }
