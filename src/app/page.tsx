@@ -510,7 +510,7 @@ function PublicHomePage() {
 
         {/* Modal Components - Add these after your footer */}
         {showAboutUs && (
-          <AboutUsPage onClose={() => setShowAboutUs(false)} />
+          <AboutUsPage onBack={() => setShowAboutUs(false)} />
         )}
 
         {showContact && (
