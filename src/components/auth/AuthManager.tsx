@@ -50,10 +50,13 @@ export default function AuthManager({
     }
   };
 
+  // Provide a default empty function for onClose if it's undefined
+  const closeHandler = onClose ?? (() => {});
+
   if (authMode === 'signup') {
     return (
       <SignupPage
-        onClose={onClose}
+        onClose={closeHandler}
         onSwitchToLogin={switchToLogin}
         isModal={isModal}
         onSignupSuccess={handleSignupSuccess}
@@ -63,7 +66,7 @@ export default function AuthManager({
 
   return (
     <LoginPage
-      onClose={onClose}
+      onClose={closeHandler}
       onSwitchToSignup={switchToSignup}
       isModal={isModal}
       onLoginSuccess={handleLoginSuccess}
