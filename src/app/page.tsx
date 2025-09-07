@@ -480,7 +480,7 @@ function PublicHomePage() {
                 <h4 className="font-semibold mb-4">Connect</h4>
                 <ul className="space-y-2 text-gray-400">
                   <li>
-                    <a href="#" className="hover:text-white transition-colors">
+                    <a href="https://www.linkedin.com/company/myguido" className="hover:text-white transition-colors">
                       LinkedIn
                     </a>
                   </li>
