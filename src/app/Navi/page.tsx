@@ -2,18 +2,74 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Send, Mic, Plus, X, MessageSquare, Trash2, Settings, Sparkles, Edit, Search, Gem, Star, MoreVertical } from 'lucide-react';
-import { useAuth } from '../../components/auth/AuthProvider'; // Adjust path based on your file structure
-import Navbar from '../../components/Navbar'; // Import the authentication-enabled Navbar
-import ProtectedRoute from '../../components/ProtectedRoute'; // Adjust path based on your file structure
+
+// Define types for better TypeScript support
+interface User {
+  email?: string;
+  user_metadata?: {
+    firstName?: string;
+    first_name?: string;
+    name?: string;
+    full_name?: string;
+  };
+}
+
+interface AuthContext {
+  user?: User | null;
+}
+
+// Mock useAuth hook - replace this with your actual auth implementation
+const useAuth = (): AuthContext => {
+  // This is a mock implementation - replace with your actual auth logic
+  return {
+    user: {
+      email: "user@example.com",
+      user_metadata: {
+        firstName: "User"
+      }
+    }
+  };
+};
+
+// Mock Navbar component - replace with your actual implementation
+const Navbar = () => {
+  return (
+    <div className="h-16 bg-[#1a1a1b] border-b border-[#2f3031] flex items-center px-4">
+      <span className="text-white">Navigation</span>
+    </div>
+  );
+};
+
+// Mock ProtectedRoute component - replace with your actual implementation
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <>{children}</>;
+};
+
+interface ChatMessage {
+  id: number;
+  text: string;
+  sender: 'user' | 'navi';
+  timestamp: string;
+}
+
+interface ChatHistoryItem {
+  id: number;
+  title: string;
+  timestamp: string;
+  active: boolean;
+  pinned: boolean;
+}
 
 // Main NAVI Chat Component
 const NaviPage = () => {
-  const { user } = useAuth(); // Get authenticated user
-  const [messages, setMessages] = useState([]);
+  const authContext = useAuth();
+  const user = authContext?.user; // Safe access to user property
+  
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true); // Default to open on desktop
-  const [chatHistory, setChatHistory] = useState([
+  const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([
     { id: 1, title: "Website First Page Review and Feedback", timestamp: "Just now", active: true, pinned: false },
     { id: 2, title: "Video Editing Plan for Space Documentary", timestamp: "2 hours ago", active: false, pinned: false },
     { id: 3, title: "रायका बाग का प्रश्न", timestamp: "Yesterday", active: false, pinned: false },
@@ -23,8 +79,8 @@ const NaviPage = () => {
     { id: 7, title: "LinkedIn Profile Enhancement Tips", timestamp: "1 week ago", active: false, pinned: false },
     { id: 8, title: "Career Development Strategy", timestamp: "1 week ago", active: false, pinned: false },
   ]);
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,7 +94,6 @@ const NaviPage = () => {
     const now = new Date();
     const hour = now.getHours();
     const day = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     
     // Time-based greetings with variations
     const morningGreetings = [
@@ -90,7 +145,7 @@ const NaviPage = () => {
     const isMonday = day === 1;
     
     // Random selection helper
-    const getRandomGreeting = (greetings) => {
+    const getRandomGreeting = (greetings: string[]) => {
       return greetings[Math.floor(Math.random() * greetings.length)];
     };
     
@@ -140,7 +195,7 @@ const NaviPage = () => {
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
-    const userMessage = {
+    const userMessage: ChatMessage = {
       id: messages.length + 1,
       text: inputText,
       sender: 'user',
@@ -153,7 +208,7 @@ const NaviPage = () => {
 
     // Simulate API response
     setTimeout(() => {
-      const naviResponse = {
+      const naviResponse: ChatMessage = {
         id: messages.length + 2,
         text: "I understand your question. Let me help you with that! This is a demo response - in the real implementation, this would connect to your backend API for personalized career guidance.",
         sender: 'navi',
@@ -167,7 +222,7 @@ const NaviPage = () => {
 
   const handleNewChat = () => {
     const newChatId = chatHistory.length + 1;
-    const newChat = {
+    const newChat: ChatHistoryItem = {
       id: newChatId,
       title: "New Chat",
       timestamp: "Just now",
@@ -184,7 +239,7 @@ const NaviPage = () => {
     setMessages([]);
   };
 
-  const handleChatSelect = (chatId) => {
+  const handleChatSelect = (chatId: number) => {
     setChatHistory(prev => 
       prev.map(chat => ({ 
         ...chat, 
@@ -196,18 +251,25 @@ const NaviPage = () => {
     setMessages([]);
   };
 
-  const handleDeleteChat = (chatId, e) => {
+  const handleDeleteChat = (chatId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setChatHistory(prev => prev.filter(chat => chat.id !== chatId));
   };
 
-  const handlePinChat = (chatId, e) => {
+  const handlePinChat = (chatId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setChatHistory(prev => 
       prev.map(chat => 
         chat.id === chatId ? { ...chat, pinned: !chat.pinned } : chat
       )
     );
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
@@ -348,12 +410,7 @@ const NaviPage = () => {
                             ref={inputRef}
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSendMessage();
-                              }
-                            }}
+                            onKeyPress={handleKeyPress}
                             placeholder="Ask NAVI"
                             className="w-full bg-transparent text-[#e8eaed] placeholder-[#9aa0a6] focus:outline-none text-base"
                             disabled={isTyping}
@@ -455,12 +512,7 @@ const NaviPage = () => {
                           <input
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSendMessage();
-                              }
-                            }}
+                            onKeyPress={handleKeyPress}
                             placeholder="Ask NAVI"
                             className="w-full bg-transparent text-[#e8eaed] placeholder-[#9aa0a6] focus:outline-none text-base"
                             disabled={isTyping}
