@@ -266,7 +266,7 @@ export const utils = {
     const name = utils.formatUserName(user)
     return name
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
+      .map((word: string) => word.charAt(0).toUpperCase())
       .join('')
       .slice(0, 2)
   },
