@@ -4,7 +4,23 @@ import React, { useState } from 'react';
 import { X, Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react';
 import { authHelpers } from '../../lib/supabase';
 
-export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, onSignupSuccess }) {
+// Define the user type
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  [key: string]: any; // Allow additional properties
+}
+
+// Define the types for the component's props
+interface SignupPageProps {
+  onClose: () => void;
+  onSwitchToLogin: () => void;
+  isModal?: boolean;
+  onSignupSuccess: (user: User) => void;
+}
+
+export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, onSignupSuccess }: SignupPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,11 +31,11 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
     confirmPassword: '',
     agreeToTerms: false
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -36,7 +52,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: { [key: string]: string } = {};
     
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
@@ -78,7 +94,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -127,15 +143,10 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
 
       // Auto-close after showing success message
       setTimeout(() => {
-        if (onClose) {
-          onClose();
-        } else {
-          // Redirect to a confirmation page or login
-          onSwitchToLogin();
-        }
+        onClose(); // Use the provided onClose handler
       }, 3000);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
       setErrors({ submit: 'An unexpected error occurred. Please try again.' });
     } finally {
@@ -144,7 +155,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
   };
 
   // Password strength indicator
-  const getPasswordStrength = (password) => {
+  const getPasswordStrength = (password: string) => {
     let strength = 0;
     if (password.length >= 8) strength++;
     if (/[a-z]/.test(password)) strength++;
@@ -210,7 +221,9 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
     if (isModal) {
       return (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          {successContent}
+          <div className="max-h-[90vh] overflow-y-auto">
+            {successContent}
+          </div>
         </div>
       );
     }
