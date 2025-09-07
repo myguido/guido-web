@@ -4,30 +4,46 @@ import React, { useState } from 'react';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 
+// Define the user type
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  [key: string]: any; // Allow additional properties
+}
+
+// Define the component props interface
+interface AuthManagerProps {
+  onClose?: () => void;
+  isModal?: boolean;
+  initialMode?: 'login' | 'signup';
+  onAuthSuccess?: (user: User, mode: 'login' | 'signup') => void;
+}
+
 export default function AuthManager({ 
   onClose, 
   isModal = true, 
   initialMode = 'login',
   onAuthSuccess 
-}) {
-  const [authMode, setAuthMode] = useState(initialMode); // 'login' or 'signup'
+}: AuthManagerProps) {
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>(initialMode);
 
-  const switchToSignup = () => {
+  const switchToSignup = (): void => {
     setAuthMode('signup');
   };
 
-  const switchToLogin = () => {
+  const switchToLogin = (): void => {
     setAuthMode('login');
   };
 
-  const handleLoginSuccess = (user) => {
+  const handleLoginSuccess = (user: User): void => {
     console.log('Login successful:', user);
     if (onAuthSuccess) {
       onAuthSuccess(user, 'login');
     }
   };
 
-  const handleSignupSuccess = (user) => {
+  const handleSignupSuccess = (user: User): void => {
     console.log('Signup successful:', user);
     if (onAuthSuccess) {
       onAuthSuccess(user, 'signup');
