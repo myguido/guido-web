@@ -1151,7 +1151,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
                       : 'bg-[#1E1E1E] text-gray-300 hover:bg-[#FF6C4A]/20'
                   }`}
                 >
-                  <span className="mr-2">{React.cloneElement(category.icon, { size: 16 })}</span>
+                  <span className="mr-2">{React.cloneElement(category.icon as React.ReactElement<any>, { size: 16 })}</span>
                   {category.name} ({category.count})
                 </button>
               ))}
