@@ -508,17 +508,17 @@ function PublicHomePage() {
           </div>
         </footer>
 
-        {/* Modal Components - Add these after your footer */}
+        {/* Modal Components - Fixed prop names */}
         {showAboutUs && (
           <AboutUsPage onBack={() => setShowAboutUs(false)} />
         )}
 
         {showContact && (
-          <ContactPage onClose={() => setShowContact(false)} isModal={true} />
+          <ContactPage onBack={() => setShowContact(false)} isModal={true} />
         )}
 
         {showCareers && (
-          <CareersPage onClose={() => setShowCareers(false)} isModal={true} />
+          <CareersPage onBack={() => setShowCareers(false)} isModal={true} />
         )}
       </div>
   
