@@ -545,8 +545,9 @@ function PublicHomePage() {
 // Main Home Content Component
 function HomeContent() {
   const authContext = useAuth();
-  const user = authContext?.user || null;
-  const loading = authContext?.loading || false;
+  // Type-safe access with fallbacks
+  const user = (authContext as any)?.user || null;
+  const loading = (authContext as any)?.loading || false;
 
   // Show loading spinner while checking auth
   if (loading) {
