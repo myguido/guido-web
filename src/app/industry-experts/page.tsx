@@ -82,7 +82,7 @@ const IndustryExpertsPage = () => {
       achievements: ["CEO of Fortune 500", "Tech Visionary", "Leadership Expert"],
       sessions: 45,
       topics: ["Leadership", "Product Strategy", "Tech Innovation", "Team Building"],
-      bio: "Leading one of the world's most innovative companies, bringing deep insights into tech leadership and strategic thinking.",
+      bio: "Leading one of the world&apos;s most innovative companies, bringing deep insights into tech leadership and strategic thinking.",
       nextAvailable: "Next Week",
       isOnline: true,
       responseTime: "< 30 min",
@@ -227,12 +227,12 @@ const IndustryExpertsPage = () => {
       achievements: ["Biotech Pioneer", "Women Leadership", "Innovation Leader"],
       sessions: 56,
       topics: ["Biotechnology", "Women in Leadership", "Innovation", "Entrepreneurship"],
-      bio: "Pioneering biotechnology entrepreneur and advocate for women's leadership in science and business.",
+      bio: "Pioneering biotechnology entrepreneur and advocate for women&apos;s leadership in science and business.",
       nextAvailable: "Next Month",
       isOnline: false,
       responseTime: "< 4 hours",
       successRate: 96,
-      education: "Bachelor's in Zoology, Bangalore University",
+      education: "Bachelor&apos;s in Zoology, Bangalore University",
       certifications: ["Biotech Pioneer", "Women Leadership Advocate", "Innovation Expert"],
       category: "healthcare"
     }
@@ -310,7 +310,7 @@ const IndustryExpertsPage = () => {
     setMessages([
       {
         id: 1,
-        text: `Hi! I'm ${expert.name}. I'm excited to share my industry experience with you. What specific challenge or goal would you like to discuss today?`,
+        text: `Hi! I&apos;m ${expert.name}. I&apos;m excited to share my industry experience with you. What specific challenge or goal would you like to discuss today?`,
         sender: 'expert',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
@@ -338,10 +338,10 @@ const IndustryExpertsPage = () => {
       
       setTimeout(() => {
         const responses = [
-          "That's an excellent question. Based on my experience in the industry, here's what I've learned...",
-          "I've faced similar challenges throughout my career. Let me share some strategic insights that could help you.",
-          "From my perspective as an industry leader, I'd recommend focusing on these key areas...",
-          "That's a common concern I hear from professionals. Here's how I approach this challenge..."
+          "That&apos;s an excellent question. Based on my experience in the industry, here&apos;s what I&apos;ve learned...",
+          "I&apos;ve faced similar challenges throughout my career. Let me share some strategic insights that could help you.",
+          "From my perspective as an industry leader, I&apos;d recommend focusing on these key areas...",
+          "That&apos;s a common concern I hear from professionals. Here&apos;s how I approach this challenge..."
         ];
         
         const expertResponse = {
@@ -390,7 +390,7 @@ const IndustryExpertsPage = () => {
               
               <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-8">
                 Get exclusive access to leaders, founders, and visionaries who are shaping the future. 
-                Learn directly from those who've built billion-dollar companies and transformed industries.
+                Learn directly from those who&apos;ve built billion-dollar companies and transformed industries.
               </p>
             </div>
 
@@ -512,9 +512,11 @@ const IndustryExpertsPage = () => {
                     {/* Profile */}
                     <div className="text-center mb-5">
                       <div className="relative inline-block mb-4">
-                        <img
+                        <Image
                           src={expert.image}
                           alt={expert.name}
+                          width={72}
+                          height={72}
                           className="w-18 h-18 rounded-2xl object-cover border-2 border-[#FF6C4A]/50 group-hover:border-[#FF6C4A] transition-all"
                         />
                         <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#151515] flex items-center justify-center ${
@@ -648,9 +650,11 @@ const IndustryExpertsPage = () => {
                   className="bg-[#151515] border border-gray-800 rounded-2xl overflow-hidden hover:border-[#FF6C4A]/50 transition-all transform hover:scale-105"
                 >
                   <div className="relative">
-                    <img
+                    <Image
                       src={event.image}
                       alt={event.title}
+                      width={300}
+                      height={200}
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute top-4 left-4">
@@ -764,9 +768,11 @@ const IndustryExpertsPage = () => {
               {/* Compact Profile */}
               <div className="text-center">
                 <div className="relative inline-block mb-3">
-                  <img
+                  <Image
                     src={selectedExpert.image}
                     alt={selectedExpert.name}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-xl border-2 border-[#FF6C4A] object-cover"
                   />
                   <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#151515] ${
@@ -915,9 +921,11 @@ const IndustryExpertsPage = () => {
             <div className="bg-[#151515] p-4 flex items-center justify-between border-b border-gray-700/50">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <img
+                  <Image
                     src={selectedExpert.image}
                     alt={selectedExpert.name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full border border-[#FF6C4A] object-cover"
                   />
                   <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-[#151515] ${
@@ -982,15 +990,16 @@ const IndustryExpertsPage = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Type a message..."
-                    rows="1"
+                    rows={1}
                     className="w-full bg-[#2a3942] border-none rounded-3xl px-4 py-2 focus:outline-none resize-none text-white placeholder-gray-400 min-h-[40px] max-h-32"
                     style={{ 
                       resize: 'none',
                       overflow: 'hidden',
                     }}
                     onInput={(e) => {
-                      e.target.style.height = 'auto';
-                      e.target.style.height = Math.min(e.target.scrollHeight, 128) + 'px';
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = 'auto';
+                      target.style.height = Math.min(target.scrollHeight, 128) + 'px';
                     }}
                   />
                 </div>
@@ -1006,7 +1015,7 @@ const IndustryExpertsPage = () => {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
-                  { text: "What's your advice for breaking into your industry?", label: "Industry Entry" },
+                  { text: "What&apos;s your advice for breaking into your industry?", label: "Industry Entry" },
                   { text: "Can you share insights about leadership in your field?", label: "Leadership" },
                   { text: "What trends should I watch in your industry?", label: "Industry Trends" },
                   { text: "How do you approach innovation and strategy?", label: "Strategy" }

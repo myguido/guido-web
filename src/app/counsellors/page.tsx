@@ -4,8 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Star, 
   MapPin, 
-  Calendar, 
-  Clock, 
   Filter, 
   Search, 
   Video, 
@@ -32,7 +30,9 @@ import {
   PlusCircle,
   ArrowRight,
   Briefcase,
-  User
+  User,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
@@ -227,7 +227,7 @@ const CounsellorsPage = () => {
     setMessages([
       {
         id: 1,
-        text: `Hi! I'm ${counsellor.name}. I'm excited to help you with your career journey. What specific challenge or goal would you like to work on today?`,
+        text: `Hi! I&apos;m ${counsellor.name}. I&apos;m excited to help you with your career journey. What specific challenge or goal would you like to work on today?`,
         sender: 'counsellor',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
@@ -256,9 +256,9 @@ const CounsellorsPage = () => {
       setTimeout(() => {
         const responses = [
           "I understand your concern. Let me share some strategic insights that could help you navigate this situation effectively.",
-          "That's a great question! Based on my experience with similar cases, here's what I'd recommend...",
-          "I appreciate you sharing that with me. Let's work together to create a personalized action plan.",
-          "Your situation is quite common, and there are proven strategies we can implement. Here's my approach..."
+          "That&apos;s a great question! Based on my experience with similar cases, here&apos;s what I&apos;d recommend...",
+          "I appreciate you sharing that with me. Let&apos;s work together to create a personalized action plan.",
+          "Your situation is quite common, and there are proven strategies we can implement. Here&apos;s my approach..."
         ];
         
         const counsellorResponse = {
@@ -393,9 +393,11 @@ const CounsellorsPage = () => {
                 {/* Profile */}
                 <div className="text-center mb-5">
                   <div className="relative inline-block mb-4">
-                    <img
+                    <Image
                       src={counsellor.image}
                       alt={counsellor.name}
+                      width={72}
+                      height={72}
                       className="w-18 h-18 rounded-2xl object-cover border-2 border-[#FF6C4A]/50 group-hover:border-[#FF6C4A] transition-all"
                     />
                     <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#151515] flex items-center justify-center ${
@@ -532,7 +534,7 @@ const CounsellorsPage = () => {
               Ready to Transform Your Career?
             </h2>
             <p className="text-white/90 text-xl mb-10 leading-relaxed max-w-3xl mx-auto">
-              Join thousands of professionals who've already accelerated their careers with our expert guidance. Your dream career is just one conversation away.
+              Join thousands of professionals who&apos;ve already accelerated their careers with our expert guidance. Your dream career is just one conversation away.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -569,9 +571,11 @@ const CounsellorsPage = () => {
               {/* Compact Profile */}
               <div className="text-center">
                 <div className="relative inline-block mb-3">
-                  <img
+                  <Image
                     src={selectedCounsellor.image}
                     alt={selectedCounsellor.name}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-xl border-2 border-[#FF6C4A] object-cover"
                   />
                   <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#151515] ${
@@ -660,9 +664,11 @@ const CounsellorsPage = () => {
             <div className="bg-[#151515] p-4 flex items-center justify-between border-b border-gray-700/50">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <img
+                  <Image
                     src={selectedCounsellor.image}
                     alt={selectedCounsellor.name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full border border-[#FF6C4A]-600 object-cover"
                   />
                   <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-[#151515] ${
@@ -727,15 +733,16 @@ const CounsellorsPage = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Type a message..."
-                    rows="1"
+                    rows={1}
                     className="w-full bg-[#2a3942] border-none rounded-3xl px-4 py-2 focus:outline-none resize-none text-white placeholder-gray-400 min-h-[40px] max-h-32"
                     style={{ 
                       resize: 'none',
                       overflow: 'hidden',
                     }}
                     onInput={(e) => {
-                      e.target.style.height = 'auto';
-                      e.target.style.height = Math.min(e.target.scrollHeight, 128) + 'px';
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = 'auto';
+                      target.style.height = Math.min(target.scrollHeight, 128) + 'px';
                     }}
                   />
                 </div>
@@ -751,7 +758,7 @@ const CounsellorsPage = () => {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {[
-                  { text: "I'd like to explore career opportunities in my field", label: "Career Opportunities" },
+                  { text: "I&apos;d like to explore career opportunities in my field", label: "Career Opportunities" },
                   { text: "Can you help me create a standout resume?", label: "Resume Building" },
                   { text: "What skills should I develop for career growth?", label: "Skill Development" },
                   { text: "I need guidance on salary negotiation", label: "Salary Strategy" }

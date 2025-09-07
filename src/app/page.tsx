@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronRight, Check, Star, Users, LogOut, User, Settings } from 'lucide-react';
+import { ChevronRight, Check, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import ContactForm from './contactform';
 import Navbar from '../components/Navbar';
 import AboutUsPage from '../components/AboutUsPage';
 import CareersPage from '../components/CareersPage';
@@ -128,7 +127,7 @@ function TestimonialSlider() {
               ))}
             </div>
             <p className="text-gray-300 mb-6 italic text-lg leading-relaxed">
-              "{testimonial.content}"
+              &ldquo;{testimonial.content}&rdquo;
             </p>
             <div>
               <div className="font-semibold text-white text-lg">{testimonial.name}</div>
@@ -188,37 +187,37 @@ function PublicHomePage() {
               </div>
 
               {/* Right UI Simulation / Mock Widget */}
-<div className="relative">
-  <div
-    style={{ background: 'linear-gradient(to right, #FF6C4A, #dc2626)' }}
-    className="rounded-2xl p-8 transform rotate-3 shadow-2xl"
-  >
-    <div className="bg-white rounded-lg p-4 transform -rotate-3">
-      <div className="space-y-4">
-        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="relative">
+                <div
+                  style={{ background: 'linear-gradient(to right, #FF6C4A, #dc2626)' }}
+                  className="rounded-2xl p-8 transform rotate-3 shadow-2xl"
+                >
+                  <div className="bg-white rounded-lg p-4 transform -rotate-3">
+                    <div className="space-y-4">
+                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
 
-        {/* Image container with proper 16:9 aspect ratio */}
-        <div className="relative w-full rounded overflow-hidden" style={{ aspectRatio: '16/9' }}>
-          <img
-            src="/assets/newbannerwebsite.png"
-            alt="Widget Preview"
-            className="w-full h-full object-cover"
-          />
-        </div>
+                      {/* Image container with proper 16:9 aspect ratio */}
+                      <div className="relative w-full rounded overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                        <Image
+                          src="/assets/newbannerwebsite.png"
+                          alt="Widget Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
 
-        <div className="flex justify-between">
-          <div
-            className="h-3 rounded w-1/3"
-            style={{ backgroundColor: '#FF6C4A' }}
-          ></div>
-          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
+                      <div className="flex justify-between">
+                        <div
+                          className="h-3 rounded w-1/3"
+                          style={{ backgroundColor: '#FF6C4A' }}
+                        ></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -238,7 +237,7 @@ function PublicHomePage() {
               },
               {
                 title: "Real Mentors",
-                desc: "Engage in meaningful conversations with professionals who've navigated similar career paths and are here to help you succeed.",
+                desc: "Engage in meaningful conversations with professionals who&apos;ve navigated similar career paths and are here to help you succeed.",
                 icon: <Users size={28} className="text-[#FF6C4A] mx-auto mb-4" />,
               },
               {
@@ -253,7 +252,7 @@ function PublicHomePage() {
               },
               {
                 title: "24/7 Support",
-                desc: "Whenever you're stuck or need motivation, we're here. Chat support, community forums, and mentor messaging—available round the clock.",
+                desc: "Whenever you&apos;re stuck or need motivation, we&apos;re here. Chat support, community forums, and mentor messaging—available round the clock.",
                 icon: <LifeBuoy size={28} className="text-[#FF6C4A] mx-auto mb-4" />,
               },
               {
@@ -290,7 +289,7 @@ function PublicHomePage() {
                 </p>
 
                 <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                  GUIDO's process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
+                  GUIDO&apos;s process starts with understanding your strengths, interests, and aspirations. Through one-on-one mentorship and data-driven career mapping, we provide clear, personalized guidance. Our continuous support ensures you make informed career choices with confidence.
                 </p>
 
                 <ul className="space-y-4 mt-6">
@@ -309,9 +308,11 @@ function PublicHomePage() {
 
               {/* Image + Stat */}
               <div className="relative">
-                <img
+                <Image
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop&crop=faces"
                   alt="Mentorship at GUIDO"
+                  width={600}
+                  height={400}
                   className="w-full rounded-3xl shadow-xl"
                 />
                 <div
@@ -371,7 +372,7 @@ function PublicHomePage() {
                 {
                   title: "24/7 Support",
                   description:
-                    "We're with you throughout your journey — whether you need help, motivation, or advice.",
+                    "We&apos;re with you throughout your journey — whether you need help, motivation, or advice.",
                   features: ["Live Chat", "Email Support", "Always Available"]
                 }
               ].map((service, index) => (
@@ -534,7 +535,7 @@ function PublicHomePage() {
 
 // Main Home Content Component
 function HomeContent() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
 
   // Show loading spinner while checking auth
   if (loading) {

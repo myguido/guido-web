@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Send, Mic, Plus, Menu, X, MessageSquare, Trash2, Settings, Sparkles, Edit, Search, Gem, Star, MoreVertical } from 'lucide-react';
+import { Send, Mic, Plus, X, MessageSquare, Trash2, Settings, Sparkles, Edit, Search, Gem, Star, MoreVertical } from 'lucide-react';
 import { useAuth } from '../../components/auth/AuthProvider'; // Adjust path based on your file structure
 import Navbar from '../../components/Navbar'; // Import the authentication-enabled Navbar
 import ProtectedRoute from '../../components/ProtectedRoute'; // Adjust path based on your file structure
@@ -221,7 +221,7 @@ const NaviPage = () => {
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="fixed top-24 left-4 z-50 p-2 bg-[#1f1f20] hover:bg-[#2a2b2c] rounded-lg transition-all border border-[#2f3031] md:hidden"
           >
-            {sidebarOpen ? <X size={20} className="text-[#e8eaed]" /> : <Menu size={20} className="text-[#e8eaed]" />}
+            <X size={20} className="text-[#e8eaed]" />
           </button>
 
           {/* Sidebar */}
@@ -242,11 +242,6 @@ const NaviPage = () => {
               {/* Sidebar Header */}
               <div className="flex items-center justify-between p-4 border-b border-[#2f3031]">
                 <div className="flex items-center gap-3">
-                  <Menu 
-                    size={20} 
-                    className="text-[#9aa0a6] cursor-pointer hover:text-[#e8eaed] transition-colors"
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                  />
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-[#FF6C4A] rounded-full flex items-center justify-center">
                       <Sparkles size={12} className="text-white" />
@@ -269,24 +264,6 @@ const NaviPage = () => {
                   <span className="text-sm">New chat</span>
                 </button>
               </div>
-
-              {/* Gems Section */}
-              {/* <div className="px-4 mb-4">
-                <div className="text-[#e8eaed] font-medium mb-3 text-sm">Gems</div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#2a2b2c] transition-colors cursor-pointer">
-                    <div className="w-6 h-6 bg-teal-600 rounded flex items-center justify-center">
-                      <span className="text-xs text-white">📚</span>
-                    </div>
-                    <span className="text-sm text-[#e8eaed]">Storybook</span>
-                    <Star size={14} className="text-[#9aa0a6] ml-auto" />
-                  </div>
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#2a2b2c] transition-colors cursor-pointer">
-                    <Gem size={16} className="text-[#9aa0a6]" />
-                    <span className="text-sm text-[#e8eaed]">Explore Gems</span>
-                  </div>
-                </div>
-              </div> */}
 
               {/* Recent Section */}
               <div className="flex-1 overflow-y-auto px-4">
