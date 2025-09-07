@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from './auth/AuthProvider';
 import AuthManager from './auth/AuthManager';
 
@@ -10,7 +10,12 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
-  const { user, loading, isAuthenticated } = useAuth();
+  const authData = useAuth();
+  
+  // Add safety checks for the auth data
+  const user = authData?.user || null;
+  const loading = authData?.loading || false;
+  const isAuthenticated = authData?.isAuthenticated || false;
 
   // Show loading state while checking authentication
   if (loading) {
