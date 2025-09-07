@@ -136,9 +136,9 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
       // Show success message
       setShowSuccessMessage(true);
 
-      // Call success callback if provided
-      if (onSignupSuccess && data.user) {
-        onSignupSuccess(data.user);
+      // Call success callback if provided and user data exists
+      if (onSignupSuccess && data.user && data.user.email) {
+        onSignupSuccess(data.user as User);
       }
 
       // Auto-close after showing success message
