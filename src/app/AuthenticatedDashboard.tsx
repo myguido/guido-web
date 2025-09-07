@@ -29,8 +29,60 @@ import {
   Target
 } from 'lucide-react';
 
+// TypeScript interfaces
+interface Mentor {
+  id: number;
+  name: string;
+  title: string;
+  experience: string;
+  rating: number;
+  reviews: number;
+  specializations: string[];
+  price: string;
+  duration: string;
+  image: string;
+  availability: string;
+  verified: boolean;
+  sessions: number;
+  location: string;
+  responseTime: string;
+  liked: boolean;
+  type: string;
+}
+
+interface Category {
+  name: string;
+  count: number;
+  icon: JSX.Element;
+  color: string;
+}
+
+interface UpcomingSession {
+  id: number;
+  mentor: string;
+  topic: string;
+  date: string;
+  time: string;
+  duration: string;
+  type: string;
+}
+
+interface User {
+  user_metadata?: {
+    firstName?: string;
+  };
+}
+
+interface MentorSliderProps {
+  mentors: Mentor[];
+  title: string;
+  likedMentors: Set<number>;
+  toggleLike: (mentorId: number) => void;
+  icon: JSX.Element;
+}
+
 // Career Counsellors
-const counsellors = [
+const counsellors: Mentor[] = [
   {
     id: 1,
     name: "Dr. Priya Sharma",
@@ -148,7 +200,7 @@ const counsellors = [
 ];
 
 // Industry Experts
-const industryExperts = [
+const industryExperts: Mentor[] = [
   {
     id: 2,
     name: "Rajesh Kumar",
@@ -266,7 +318,7 @@ const industryExperts = [
 ];
 
 // Life Coaches
-const lifeCoaches = [
+const lifeCoaches: Mentor[] = [
   {
     id: 9,
     name: "Dr. Neha Kapoor",
@@ -384,7 +436,7 @@ const lifeCoaches = [
 ];
 
 // Skill Development Mentors
-const skillMentors = [
+const skillMentors: Mentor[] = [
   {
     id: 13,
     name: "Aarav Tech",
@@ -502,7 +554,7 @@ const skillMentors = [
 ];
 
 // Top Performers
-const topPerformers = [
+const topPerformers: Mentor[] = [
   {
     id: 17,
     name: "Dr. Rajesh IAS",
@@ -620,7 +672,7 @@ const topPerformers = [
 ];
 
 // Creative Professionals
-const creativeExperts = [
+const creativeExperts: Mentor[] = [
   {
     id: 31,
     name: "Arjun Film",
@@ -737,7 +789,7 @@ const creativeExperts = [
   }
 ];
 
-const categories = [
+const categories: Category[] = [
   { name: "Technology", count: 45, icon: <BookOpen size={24} />, color: "bg-blue-500" },
   { name: "Finance", count: 32, icon: <TrendingUp size={24} />, color: "bg-green-500" },
   { name: "Healthcare", count: 28, icon: <Award size={24} />, color: "bg-red-500" },
@@ -746,7 +798,7 @@ const categories = [
   { name: "Business", count: 41, icon: <MessageCircle size={24} />, color: "bg-yellow-500" }
 ];
 
-const upcomingSessions = [
+const upcomingSessions: UpcomingSession[] = [
   {
     id: 1,
     mentor: "Dr. Priya Sharma",
@@ -768,7 +820,7 @@ const upcomingSessions = [
 ];
 
 // Slider Component
-function MentorSlider({ mentors, title, likedMentors, toggleLike, icon }) {
+function MentorSlider({ mentors, title, likedMentors, toggleLike, icon }: MentorSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const itemsPerSlide = 4;
   const totalSlides = Math.ceil(mentors.length / itemsPerSlide);
@@ -944,13 +996,17 @@ function MentorSlider({ mentors, title, likedMentors, toggleLike, icon }) {
   );
 }
 
-function AuthenticatedDashboard({ user }) {
+interface AuthenticatedDashboardProps {
+  user?: User;
+}
+
+function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
   const [likedMentors, setLikedMentors] = useState(new Set([3, 6, 10, 18, 24, 26, 29, 32, 36]));
 
-  const toggleLike = (mentorId) => {
+  const toggleLike = (mentorId: number) => {
     const newLikedMentors = new Set(likedMentors);
     if (newLikedMentors.has(mentorId)) {
       newLikedMentors.delete(mentorId);
