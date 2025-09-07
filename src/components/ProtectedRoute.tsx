@@ -12,10 +12,13 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const authData = useAuth();
   
-  // Add safety checks for the auth data
-  const user = authData?.user || null;
-  const loading = authData?.loading || false;
-  const isAuthenticated = authData?.isAuthenticated || false;
+  // Type guard to ensure authData has the expected properties
+  const hasAuthData = authData && typeof authData === 'object' && 'user' in authData;
+  
+  // Add safety checks for the auth data with type assertion
+  const user = hasAuthData ? (authData as any).user : null;
+  const loading = hasAuthData ? (authData as any).loading || false : false;
+  const isAuthenticated = hasAuthData ? (authData as any).isAuthenticated || false : false;
 
   // Show loading state while checking authentication
   if (loading) {
