@@ -515,7 +515,6 @@ function PublicHomePage() {
 
         {showContact && (
           <ContactPage 
-            onClose={() => setShowContact(false)} 
             onBack={() => setShowContact(false)} 
             isModal={true} 
           />
