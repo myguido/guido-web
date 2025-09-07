@@ -514,11 +514,19 @@ function PublicHomePage() {
         )}
 
         {showContact && (
-          <ContactPage onBack={() => setShowContact(false)} isModal={true} />
+          <ContactPage 
+            onClose={() => setShowContact(false)} 
+            onBack={() => setShowContact(false)} 
+            isModal={true} 
+          />
         )}
 
         {showCareers && (
-          <CareersPage onBack={() => setShowCareers(false)} isModal={true} />
+          <CareersPage 
+            onClose={() => setShowCareers(false)} 
+            onBack={() => setShowCareers(false)} 
+            isModal={true} 
+          />
         )}
       </div>
   
