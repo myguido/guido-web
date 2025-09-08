@@ -2,43 +2,8 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Send, Mic, Plus, X, MessageSquare, Trash2, Settings, Sparkles, Edit, Search, Gem, Star, MoreVertical } from 'lucide-react';
-
-// Define types for better TypeScript support
-interface User {
-  email?: string;
-  user_metadata?: {
-    firstName?: string;
-    first_name?: string;
-    name?: string;
-    full_name?: string;
-  };
-}
-
-interface AuthContext {
-  user?: User | null;
-}
-
-// Mock useAuth hook - replace this with your actual auth implementation
-const useAuth = (): AuthContext => {
-  // This is a mock implementation - replace with your actual auth logic
-  return {
-    user: {
-      email: "user@example.com",
-      user_metadata: {
-        firstName: "User"
-      }
-    }
-  };
-};
-
-// Mock Navbar component - replace with your actual implementation
-const Navbar = () => {
-  return (
-    <div className="h-16 bg-[#1a1a1b] border-b border-[#2f3031] flex items-center px-4">
-      <span className="text-white">Navigation</span>
-    </div>
-  );
-};
+import Navbar from '../../components/Navbar'; // Import the actual Navbar component
+import { useAuth } from '../../components/auth/AuthProvider'; // Import actual auth hook
 
 // Mock ProtectedRoute component - replace with your actual implementation
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -62,8 +27,7 @@ interface ChatHistoryItem {
 
 // Main NAVI Chat Component
 const NaviPage = () => {
-  const authContext = useAuth();
-  const user = authContext?.user; // Safe access to user property
+  const { user } = useAuth(); // Use actual auth hook
   
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
@@ -178,16 +142,21 @@ const NaviPage = () => {
     }
   };
 
-  // Get user's proper name from user object
+  // Get user's proper name from user object - Fixed to get actual user name
   const getUserName = () => {
     if (user) {
-      // Try different possible name fields
-      return user.user_metadata?.firstName || 
-             user.user_metadata?.first_name || 
-             user.user_metadata?.name || 
-             user.user_metadata?.full_name || 
-             user.email?.split('@')[0] || 
-             'there';
+      // Try different possible name fields and extract first name only
+      const fullName = user.user_metadata?.firstName || 
+                      user.user_metadata?.first_name || 
+                      user.user_metadata?.name || 
+                      user.user_metadata?.full_name || 
+                      user.email?.split('@')[0];
+                      
+      if (fullName) {
+        // If it's a full name, extract just the first part
+        const firstName = fullName.split(' ')[0];
+        return firstName;
+      }
     }
     return 'there';
   };
@@ -277,30 +246,31 @@ const NaviPage = () => {
       <div className="min-h-screen bg-[#131314] text-white">
         <Navbar />
         
-        <div className="min-h-screen bg-[#131314] text-white flex relative">
-          {/* Sidebar Toggle Button */}
+        {/* Main container with proper navbar spacing */}
+        <div className="pt-20 min-h-screen bg-[#131314] text-white flex relative">
+          {/* Sidebar Toggle Button - Fixed positioning */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="fixed top-24 left-4 z-50 p-2 bg-[#1f1f20] hover:bg-[#2a2b2c] rounded-lg transition-all border border-[#2f3031] md:hidden"
+            className="fixed top-28 left-4 z-50 p-2 bg-[#1f1f20] hover:bg-[#2a2b2c] rounded-lg transition-all border border-[#2f3031] md:hidden"
           >
-            <X size={20} className="text-[#e8eaed]" />
+            {sidebarOpen ? <X size={20} className="text-[#e8eaed]" /> : <MessageSquare size={20} className="text-[#e8eaed]" />}
           </button>
 
-          {/* Sidebar */}
+          {/* Mobile Overlay */}
+          {sidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-30 md:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          {/* Sidebar - Fixed positioning and proper height */}
           <div className={`fixed top-20 left-0 h-[calc(100vh-80px)] w-80 bg-[#1a1a1b] border-r border-[#2f3031] z-40 transform transition-transform ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:relative md:translate-x-0 md:top-0 md:h-screen md:block`}>
-            
-            {/* Mobile Overlay */}
-            {sidebarOpen && (
-              <div 
-                className="fixed inset-0 bg-black/50 z-30 md:hidden"
-                onClick={() => setSidebarOpen(false)}
-              />
-            )}
+          } md:relative md:translate-x-0 md:top-0 md:h-[calc(100vh-80px)] md:block`}>
             
             {/* Sidebar Content */}
-            <div className="relative h-full flex flex-col bg-[#1a1a1b] z-40">
+            <div className="h-full flex flex-col bg-[#1a1a1b]">
               {/* Sidebar Header */}
               <div className="flex items-center justify-between p-4 border-b border-[#2f3031]">
                 <div className="flex items-center gap-3">
@@ -386,10 +356,10 @@ const NaviPage = () => {
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className={`flex-1 flex flex-col min-h-screen transition-all ${
+          {/* Main Content - Proper spacing and height */}
+          <div className={`flex-1 flex flex-col transition-all ${
             sidebarOpen ? 'md:ml-0' : 'ml-0'
-          }`}>
+          }`} style={{ height: 'calc(100vh - 80px)' }}>
             {messages.length === 0 && !isTyping ? (
               /* Welcome Screen - Gemini Style */
               <div className="flex-1 flex flex-col items-center justify-center px-4">
@@ -446,7 +416,7 @@ const NaviPage = () => {
                 </div>
               </div>
             ) : (
-              /* Chat Messages */
+              /* Chat Messages - Fixed scrolling and spacing */
               <>
                 <div className="flex-1 overflow-y-auto">
                   <div className="max-w-4xl mx-auto px-6 py-8">
@@ -504,7 +474,7 @@ const NaviPage = () => {
                 </div>
 
                 {/* Input Section - Fixed at bottom during conversation */}
-                <div className="border-t border-[#2f3031] bg-[#131314] p-4">
+                <div className="border-t border-[#2f3031] bg-[#131314] p-4 pb-24 md:pb-4">
                   <div className="max-w-3xl mx-auto">
                     <div className="bg-[#1f1f20] border border-[#2f3031] rounded-full px-6 py-4">
                       <div className="flex items-center gap-4">

@@ -249,7 +249,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+            className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
               errors.firstName ? 'ring-2 ring-red-200 bg-red-50/50' : ''
             }`}
             placeholder="John"
@@ -269,7 +269,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+            className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
               errors.lastName ? 'ring-2 ring-red-200 bg-red-50/50' : ''
             }`}
             placeholder="Doe"
@@ -291,7 +291,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
           name="email"
           value={formData.email}
           onChange={handleInputChange}
-          className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+          className={`w-full px-4 py-3 bg-gray-50/80 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
             errors.email ? 'ring-2 ring-red-200 bg-red-50/50' : ''
           }`}
           placeholder="john@example.com"
@@ -313,7 +313,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
+            className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-gray-200 transition-all ${
               errors.password ? 'ring-2 ring-red-200 bg-red-50/50' : ''
             }`}
             placeholder="Create a strong password"
@@ -368,7 +368,7 @@ export default function SignupPage({ onClose, onSwitchToLogin, isModal = false, 
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl focus:bg-white focus:ring-2 transition-all ${
+            className={`w-full px-4 py-3 pr-12 bg-gray-50/80 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 transition-all ${
               errors.confirmPassword 
                 ? 'ring-2 ring-red-200 bg-red-50/50' 
                 : formData.confirmPassword && formData.password === formData.confirmPassword

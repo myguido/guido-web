@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Menu, X, Home, Navigation, Users, Briefcase, User, LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../components/auth/AuthProvider';
 import AuthManager from '../components/auth/AuthManager';
 
@@ -14,6 +14,7 @@ export default function Navbar() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
   const pathname = usePathname();
+  const router = useRouter();
   const { user, loading, signOut } = useAuth();
 
   // Memoize navigation items with icons for bottom nav
@@ -48,7 +49,9 @@ export default function Navbar() {
     try {
       await signOut();
       setIsProfileDropdownOpen(false);
-      console.log('User signed out successfully');
+      // Redirect to home page after successful logout
+      router.push('/');
+      console.log('User signed out successfully and redirected to home');
     } catch (error) {
       console.error('Error signing out:', error);
       alert('Error signing out. Please try again.');
