@@ -26,7 +26,16 @@ import {
   ThumbsUp,
   Briefcase,
   Zap,
-  Target
+  Target,
+  X,
+  CreditCard,
+  Shield,
+  ChevronDown,
+  Check,
+  AlertCircle,
+  Play,
+  FileText,
+  Bell
 } from 'lucide-react';
 
 // TypeScript interfaces
@@ -48,6 +57,7 @@ interface Mentor {
   responseTime: string;
   liked: boolean;
   type: string;
+  availableSlots: string[];
 }
 
 interface Category {
@@ -79,6 +89,405 @@ interface MentorSliderProps {
   likedMentors: Set<number>;
   toggleLike: (mentorId: number) => void;
   icon: React.ReactElement;
+  onBookSession: (mentor: Mentor) => void;
+}
+
+interface BookingModalProps {
+  mentor: Mentor | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirmBooking: (mentorId: number, date: string, time: string) => void;
+}
+
+// Quick Actions Data
+const quickActions = [
+  {
+    id: 1,
+    title: "Start Learning Path",
+    description: "Begin your personalized career journey",
+    icon: <Play className="text-[#FF6C4A]" size={20} />,
+    color: "bg-[#FF6C4A]/20",
+    action: "Get Started"
+  },
+  {
+    id: 2,
+    title: "Schedule Assessment",
+    description: "Get your skills evaluated by experts",
+    icon: <FileText className="text-blue-500" size={20} />,
+    color: "bg-blue-500/20",
+    action: "Book Now"
+  },
+  {
+    id: 3,
+    title: "Join Workshop",
+    description: "Attend live sessions with industry leaders",
+    icon: <Users className="text-green-500" size={20} />,
+    color: "bg-green-500/20",
+    action: "Explore"
+  },
+  {
+    id: 4,
+    title: "Track Progress",
+    description: "Monitor your growth and achievements",
+    icon: <TrendingUp className="text-purple-500" size={20} />,
+    color: "bg-purple-500/20",
+    action: "View Progress"
+  }
+];
+
+// Recent Activity Data
+const recentActivities = [
+  {
+    id: 1,
+    type: "session",
+    message: "Completed session with Dr. Priya Sharma",
+    time: "2 hours ago",
+    icon: <CheckCircle className="text-green-500" size={16} />
+  },
+  {
+    id: 2,
+    type: "booking",
+    message: "Booked Finance Career Workshop",
+    time: "5 hours ago",
+    icon: <Calendar className="text-blue-500" size={16} />
+  },
+  {
+    id: 3,
+    type: "achievement",
+    message: "Unlocked 'Consistent Learner' badge",
+    time: "1 day ago",
+    icon: <Award className="text-yellow-500" size={16} />
+  },
+  {
+    id: 4,
+    type: "message",
+    message: "New message from Rajesh Kumar",
+    time: "2 days ago",
+    icon: <MessageCircle className="text-[#FF6C4A]" size={16} />
+  }
+];
+
+// Booking Modal Component
+function BookingModal({ mentor, isOpen, onClose, onConfirmBooking }: BookingModalProps) {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('card');
+
+  if (!isOpen || !mentor) return null;
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedTime('');
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
+  };
+
+  const handleProceedToPayment = () => {
+    if (selectedDate && selectedTime) {
+      setShowPayment(true);
+    }
+  };
+
+  const handleConfirmPayment = () => {
+    onConfirmBooking(mentor.id, selectedDate, selectedTime);
+    onClose();
+    setShowPayment(false);
+    setSelectedDate('');
+    setSelectedTime('');
+  };
+
+  const getNextDays = (count: number) => {
+    const days = [];
+    const today = new Date();
+    for (let i = 0; i < count; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      days.push(date);
+    }
+    return days;
+  };
+
+  const availableTimes = [
+    "09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", 
+    "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"
+  ];
+
+  const nextDays = getNextDays(7);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1E1E1E] rounded-xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {!showPayment ? (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <div className="flex items-center">
+                <img
+                  src={mentor.image}
+                  alt={mentor.name}
+                  className="w-12 h-12 rounded-full object-cover mr-3"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{mentor.name}</h3>
+                  <p className="text-sm text-gray-400">{mentor.title}</p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="text-gray-400" size={20} />
+              </button>
+            </div>
+
+            {/* Session Details */}
+            <div className="p-6 border-b border-gray-700">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <Clock className="text-[#FF6C4A] mr-2" size={16} />
+                  <span className="text-sm text-gray-300">Duration: {mentor.duration}</span>
+                </div>
+                <div className="flex items-center">
+                  <CreditCard className="text-green-500 mr-2" size={16} />
+                  <span className="text-sm text-gray-300">Price: {mentor.price}</span>
+                </div>
+                <div className="flex items-center">
+                  <Video className="text-blue-500 mr-2" size={16} />
+                  <span className="text-sm text-gray-300">Video Call Session</span>
+                </div>
+                <div className="flex items-center">
+                  <Shield className="text-purple-500 mr-2" size={16} />
+                  <span className="text-sm text-gray-300">Secure Payment</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Date Selection */}
+            <div className="p-6 border-b border-gray-700">
+              <h4 className="text-white font-medium mb-4">Select Date</h4>
+              <div className="grid grid-cols-7 gap-2">
+                {nextDays.map((date, index) => {
+                  const dateStr = date.toISOString().split('T')[0];
+                  const isSelected = selectedDate === dateStr;
+                  const isToday = index === 0;
+                  
+                  return (
+                    <button
+                      key={dateStr}
+                      onClick={() => handleDateSelect(dateStr)}
+                      className={`p-3 rounded-lg text-center transition-colors ${
+                        isSelected
+                          ? 'bg-[#FF6C4A] text-white'
+                          : 'bg-[#151515] text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      <div className="text-xs">{date.toLocaleDateString('en', { weekday: 'short' })}</div>
+                      <div className="text-sm font-medium">{date.getDate()}</div>
+                      {isToday && <div className="text-xs text-[#FF6C4A]">Today</div>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Time Selection */}
+            {selectedDate && (
+              <div className="p-6 border-b border-gray-700">
+                <h4 className="text-white font-medium mb-4">Select Time</h4>
+                <div className="grid grid-cols-4 gap-2">
+                  {availableTimes.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => handleTimeSelect(time)}
+                      className={`p-3 rounded-lg text-center transition-colors ${
+                        selectedTime === time
+                          ? 'bg-[#FF6C4A] text-white'
+                          : 'bg-[#151515] text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="p-6 flex gap-3">
+              <button
+                onClick={onClose}
+                className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleProceedToPayment}
+                disabled={!selectedDate || !selectedTime}
+                className="flex-1 px-4 py-2 bg-[#FF6C4A] text-white rounded-lg hover:bg-[#FF6C4A]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Proceed to Payment
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Payment Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Complete Payment</h3>
+              <button
+                onClick={() => setShowPayment(false)}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <ChevronLeft className="text-gray-400" size={20} />
+              </button>
+            </div>
+
+            {/* Booking Summary */}
+            <div className="p-6 border-b border-gray-700">
+              <div className="bg-[#151515] p-4 rounded-lg">
+                <h4 className="text-white font-medium mb-2">Booking Summary</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Mentor:</span>
+                    <span className="text-white">{mentor.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Date:</span>
+                    <span className="text-white">{new Date(selectedDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Time:</span>
+                    <span className="text-white">{selectedTime}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Duration:</span>
+                    <span className="text-white">{mentor.duration}</span>
+                  </div>
+                  <div className="flex justify-between font-medium pt-2 border-t border-gray-600">
+                    <span className="text-white">Total:</span>
+                    <span className="text-[#FF6C4A]">{mentor.price}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Methods */}
+            <div className="p-6 border-b border-gray-700">
+              <h4 className="text-white font-medium mb-4">Payment Method</h4>
+              <div className="space-y-3">
+                <label className="flex items-center p-3 bg-[#151515] rounded-lg cursor-pointer">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <CreditCard className="text-blue-500 mr-3" size={20} />
+                  <span className="text-white">Credit/Debit Card</span>
+                </label>
+                <label className="flex items-center p-3 bg-[#151515] rounded-lg cursor-pointer">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="upi"
+                    checked={paymentMethod === 'upi'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <Phone className="text-green-500 mr-3" size={20} />
+                  <span className="text-white">UPI Payment</span>
+                </label>
+                <label className="flex items-center p-3 bg-[#151515] rounded-lg cursor-pointer">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="wallet"
+                    checked={paymentMethod === 'wallet'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <CreditCard className="text-purple-500 mr-3" size={20} />
+                  <span className="text-white">Digital Wallet</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Payment Form */}
+            <div className="p-6 border-b border-gray-700">
+              {paymentMethod === 'card' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Card Number</label>
+                    <input
+                      type="text"
+                      placeholder="1234 5678 9012 3456"
+                      className="w-full p-3 bg-[#151515] border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6C4A]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">Expiry Date</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        className="w-full p-3 bg-[#151515] border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6C4A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">CVV</label>
+                      <input
+                        type="text"
+                        placeholder="123"
+                        className="w-full p-3 bg-[#151515] border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6C4A]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              {paymentMethod === 'upi' && (
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">UPI ID</label>
+                  <input
+                    type="text"
+                    placeholder="your-upi@bank"
+                    className="w-full p-3 bg-[#151515] border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6C4A]"
+                  />
+                </div>
+              )}
+              {paymentMethod === 'wallet' && (
+                <div className="text-center py-4">
+                  <div className="text-gray-400 mb-2">You will be redirected to your wallet</div>
+                  <div className="text-sm text-gray-500">Complete payment securely</div>
+                </div>
+              )}
+            </div>
+
+            {/* Payment Actions */}
+            <div className="p-6 flex gap-3">
+              <button
+                onClick={() => setShowPayment(false)}
+                className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleConfirmPayment}
+                className="flex-1 px-4 py-2 bg-[#FF6C4A] text-white rounded-lg hover:bg-[#FF6C4A]/90 transition-colors flex items-center justify-center"
+              >
+                <Shield className="mr-2" size={16} />
+                Pay {mentor.price}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // Career Counsellors
@@ -100,7 +509,8 @@ const counsellors: Mentor[] = [
     location: "Mumbai",
     responseTime: "< 2 hours",
     liked: false,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
   },
   {
     id: 3,
@@ -119,7 +529,8 @@ const counsellors: Mentor[] = [
     location: "Bangalore",
     responseTime: "< 30 min",
     liked: true,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
   },
   {
     id: 5,
@@ -138,7 +549,8 @@ const counsellors: Mentor[] = [
     location: "Chennai",
     responseTime: "< 1 hour",
     liked: false,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
   },
   {
     id: 6,
@@ -157,7 +569,8 @@ const counsellors: Mentor[] = [
     location: "Hyderabad",
     responseTime: "< 2 hours",
     liked: true,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "06:00 PM"]
   },
   {
     id: 21,
@@ -176,7 +589,8 @@ const counsellors: Mentor[] = [
     location: "Pune",
     responseTime: "< 1 hour",
     liked: false,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
   },
   {
     id: 22,
@@ -195,7 +609,8 @@ const counsellors: Mentor[] = [
     location: "Delhi",
     responseTime: "< 3 hours",
     liked: false,
-    type: "counsellor"
+    type: "counsellor",
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"]
   }
 ];
 
@@ -218,7 +633,8 @@ const industryExperts: Mentor[] = [
     location: "Delhi",
     responseTime: "< 1 hour",
     liked: false,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["10:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
   },
   {
     id: 4,
@@ -237,7 +653,8 @@ const industryExperts: Mentor[] = [
     location: "Pune",
     responseTime: "< 3 hours",
     liked: false,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
   },
   {
     id: 7,
@@ -256,7 +673,8 @@ const industryExperts: Mentor[] = [
     location: "Mumbai",
     responseTime: "< 1 hour",
     liked: false,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["09:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
   },
   {
     id: 8,
@@ -275,7 +693,8 @@ const industryExperts: Mentor[] = [
     location: "Bangalore",
     responseTime: "< 4 hours",
     liked: false,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"]
   },
   {
     id: 23,
@@ -294,7 +713,8 @@ const industryExperts: Mentor[] = [
     location: "Gurgaon",
     responseTime: "< 2 hours",
     liked: false,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "03:00 PM"]
   },
   {
     id: 24,
@@ -313,7 +733,8 @@ const industryExperts: Mentor[] = [
     location: "Bangalore",
     responseTime: "< 2 hours",
     liked: true,
-    type: "expert"
+    type: "expert",
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
   }
 ];
 
@@ -336,7 +757,8 @@ const lifeCoaches: Mentor[] = [
     location: "Mumbai",
     responseTime: "< 1 hour",
     liked: false,
-    type: "coach"
+    type: "coach",
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
   },
   {
     id: 10,
@@ -355,7 +777,8 @@ const lifeCoaches: Mentor[] = [
     location: "Bangalore",
     responseTime: "< 2 hours",
     liked: true,
-    type: "coach"
+    type: "coach",
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"]
   },
   {
     id: 11,
@@ -374,7 +797,8 @@ const lifeCoaches: Mentor[] = [
     location: "Kerala",
     responseTime: "< 30 min",
     liked: false,
-    type: "coach"
+    type: "coach",
+    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "04:00 PM"]
   },
   {
     id: 12,
@@ -393,7 +817,8 @@ const lifeCoaches: Mentor[] = [
     location: "Delhi",
     responseTime: "< 3 hours",
     liked: false,
-    type: "coach"
+    type: "coach",
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "06:00 PM"]
   },
   {
     id: 25,
@@ -412,7 +837,8 @@ const lifeCoaches: Mentor[] = [
     location: "Chennai",
     responseTime: "< 1 hour",
     liked: false,
-    type: "coach"
+    type: "coach",
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "05:00 PM"]
   },
   {
     id: 26,
@@ -431,361 +857,8 @@ const lifeCoaches: Mentor[] = [
     location: "Mumbai",
     responseTime: "< 4 hours",
     liked: true,
-    type: "coach"
-  }
-];
-
-// Skill Development Mentors
-const skillMentors: Mentor[] = [
-  {
-    id: 13,
-    name: "Aarav Tech",
-    title: "Full Stack Developer Mentor",
-    experience: "7+ years",
-    rating: 4.8,
-    reviews: 156,
-    specializations: ["React", "Node.js", "Python"],
-    price: "₹2,400",
-    duration: "60 min",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 267,
-    location: "Pune",
-    responseTime: "< 2 hours",
-    liked: false,
-    type: "skill"
-  },
-  {
-    id: 14,
-    name: "Ishita Design",
-    title: "UI/UX Design Mentor",
-    experience: "9+ years",
-    rating: 4.9,
-    reviews: 201,
-    specializations: ["UI Design", "UX Research", "Figma"],
-    price: "₹2,900",
-    duration: "65 min",
-    image: "https://images.unsplash.com/photo-1494790108755-2616c27c7923?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Tomorrow",
-    verified: true,
-    sessions: 345,
-    location: "Bangalore",
-    responseTime: "< 1 hour",
-    liked: true,
-    type: "skill"
-  },
-  {
-    id: 15,
-    name: "Suresh Analytics",
-    title: "Data Analytics Mentor",
-    experience: "11+ years",
-    rating: 4.8,
-    reviews: 189,
-    specializations: ["Excel", "SQL", "Tableau"],
-    price: "₹2,600",
-    duration: "70 min",
-    image: "https://images.unsplash.com/photo-1556157382-97eda2f9e2bf?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 432,
-    location: "Hyderabad",
-    responseTime: "< 3 hours",
-    liked: false,
-    type: "skill"
-  },
-  {
-    id: 16,
-    name: "Maya Content",
-    title: "Content Writing Mentor",
-    experience: "6+ years",
-    rating: 4.7,
-    reviews: 134,
-    specializations: ["Content Strategy", "SEO Writing", "Copywriting"],
-    price: "₹2,200",
-    duration: "50 min",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Tomorrow",
-    verified: true,
-    sessions: 198,
-    location: "Delhi",
-    responseTime: "< 2 hours",
-    liked: false,
-    type: "skill"
-  },
-  {
-    id: 27,
-    name: "Aditi Marketing",
-    title: "Digital Marketing Mentor",
-    experience: "8+ years",
-    rating: 4.8,
-    reviews: 167,
-    specializations: ["Google Ads", "Social Media", "Analytics"],
-    price: "₹2,500",
-    duration: "60 min",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 289,
-    location: "Mumbai",
-    responseTime: "< 1 hour",
-    liked: false,
-    type: "skill"
-  },
-  {
-    id: 28,
-    name: "Karan Finance",
-    title: "Financial Modeling Mentor",
-    experience: "10+ years",
-    rating: 4.9,
-    reviews: 212,
-    specializations: ["Excel Modeling", "Valuation", "Financial Analysis"],
-    price: "₹3,000",
-    duration: "75 min",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Tomorrow",
-    verified: true,
-    sessions: 356,
-    location: "Gurgaon",
-    responseTime: "< 2 hours",
-    liked: true,
-    type: "skill"
-  }
-];
-
-// Top Performers
-const topPerformers: Mentor[] = [
-  {
-    id: 17,
-    name: "Dr. Rajesh IAS",
-    title: "Civil Services Mentor",
-    experience: "20+ years",
-    rating: 4.9,
-    reviews: 456,
-    specializations: ["UPSC Preparation", "Interview Skills", "Public Administration"],
-    price: "₹5,000",
-    duration: "90 min",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 3 days",
-    verified: true,
-    sessions: 1234,
-    location: "Delhi",
-    responseTime: "< 6 hours",
-    liked: false,
-    type: "top"
-  },
-  {
-    id: 18,
-    name: "Priyanka CEO",
-    title: "Startup Founder & CEO",
-    experience: "18+ years",
-    rating: 4.9,
-    reviews: 389,
-    specializations: ["Entrepreneurship", "Fundraising", "Scale-up Strategy"],
-    price: "₹6,000",
-    duration: "120 min",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 5 days",
-    verified: true,
-    sessions: 892,
-    location: "Bangalore",
-    responseTime: "< 8 hours",
-    liked: true,
-    type: "top"
-  },
-  {
-    id: 19,
-    name: "Anil Investment",
-    title: "Investment Banking MD",
-    experience: "22+ years",
-    rating: 4.8,
-    reviews: 278,
-    specializations: ["Investment Banking", "M&A", "Capital Markets"],
-    price: "₹7,500",
-    duration: "90 min",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 7 days",
-    verified: true,
-    sessions: 567,
-    location: "Mumbai",
-    responseTime: "< 12 hours",
-    liked: false,
-    type: "top"
-  },
-  {
-    id: 20,
-    name: "Kavita Tech",
-    title: "Tech VP at Fortune 500",
-    experience: "16+ years",
-    rating: 4.9,
-    reviews: 334,
-    specializations: ["Technology Leadership", "Product Strategy", "Innovation"],
-    price: "₹5,500",
-    duration: "100 min",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 4 days",
-    verified: true,
-    sessions: 723,
-    location: "Hyderabad",
-    responseTime: "< 6 hours",
-    liked: false,
-    type: "top"
-  },
-  {
-    id: 29,
-    name: "Raman Consult",
-    title: "McKinsey Partner",
-    experience: "25+ years",
-    rating: 4.9,
-    reviews: 567,
-    specializations: ["Strategy Consulting", "Digital Transformation", "Operations"],
-    price: "₹8,000",
-    duration: "120 min",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 10 days",
-    verified: true,
-    sessions: 1456,
-    location: "Mumbai",
-    responseTime: "< 24 hours",
-    liked: true,
-    type: "top"
-  },
-  {
-    id: 30,
-    name: "Sunita Global",
-    title: "Global Head - Operations",
-    experience: "19+ years",
-    rating: 4.8,
-    reviews: 423,
-    specializations: ["Operations Management", "Process Optimization", "Global Leadership"],
-    price: "₹6,500",
-    duration: "110 min",
-    image: "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 6 days",
-    verified: true,
-    sessions: 989,
-    location: "Pune",
-    responseTime: "< 8 hours",
-    liked: false,
-    type: "top"
-  }
-];
-
-// Creative Professionals
-const creativeExperts: Mentor[] = [
-  {
-    id: 31,
-    name: "Arjun Film",
-    title: "Film Director & Producer",
-    experience: "14+ years",
-    rating: 4.8,
-    reviews: 234,
-    specializations: ["Film Making", "Direction", "Storytelling"],
-    price: "₹4,200",
-    duration: "90 min",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face",
-    availability: "Available in 2 days",
-    verified: true,
-    sessions: 456,
-    location: "Mumbai",
-    responseTime: "< 4 hours",
-    liked: false,
-    type: "creative"
-  },
-  {
-    id: 32,
-    name: "Simran Fashion",
-    title: "Fashion Designer",
-    experience: "12+ years",
-    rating: 4.9,
-    reviews: 189,
-    specializations: ["Fashion Design", "Branding", "Retail"],
-    price: "₹3,500",
-    duration: "75 min",
-    image: "https://images.unsplash.com/photo-1494790108755-2616c27c7923?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 367,
-    location: "Delhi",
-    responseTime: "< 2 hours",
-    liked: true,
-    type: "creative"
-  },
-  {
-    id: 33,
-    name: "Rohit Music",
-    title: "Music Producer & Composer",
-    experience: "16+ years",
-    rating: 4.8,
-    reviews: 278,
-    specializations: ["Music Production", "Composition", "Sound Design"],
-    price: "₹3,800",
-    duration: "80 min",
-    image: "https://images.unsplash.com/photo-1556157382-97eda2f9e2bf?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Tomorrow",
-    verified: true,
-    sessions: 523,
-    location: "Chennai",
-    responseTime: "< 3 hours",
-    liked: false,
-    type: "creative"
-  },
-  {
-    id: 34,
-    name: "Neha Writer",
-    title: "Published Author & Editor",
-    experience: "11+ years",
-    rating: 4.9,
-    reviews: 156,
-    specializations: ["Creative Writing", "Publishing", "Editing"],
-    price: "₹2,800",
-    duration: "60 min",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 289,
-    location: "Bangalore",
-    responseTime: "< 1 hour",
-    liked: false,
-    type: "creative"
-  },
-  {
-    id: 35,
-    name: "Vikash Photo",
-    title: "Commercial Photographer",
-    experience: "9+ years",
-    rating: 4.7,
-    reviews: 167,
-    specializations: ["Photography", "Visual Storytelling", "Brand Photography"],
-    price: "₹3,200",
-    duration: "70 min",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Tomorrow",
-    verified: true,
-    sessions: 234,
-    location: "Mumbai",
-    responseTime: "< 2 hours",
-    liked: false,
-    type: "creative"
-  },
-  {
-    id: 36,
-    name: "Ananya Dance",
-    title: "Choreographer & Dancer",
-    experience: "8+ years",
-    rating: 4.8,
-    reviews: 145,
-    specializations: ["Dance", "Choreography", "Performance Arts"],
-    price: "₹2,500",
-    duration: "55 min",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=face",
-    availability: "Available Today",
-    verified: true,
-    sessions: 198,
-    location: "Kolkata",
-    responseTime: "< 1 hour",
-    liked: true,
-    type: "creative"
+    type: "coach",
+    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
   }
 ];
 
@@ -820,7 +893,7 @@ const upcomingSessions: UpcomingSession[] = [
 ];
 
 // Slider Component
-function MentorSlider({ mentors, title, likedMentors, toggleLike, icon }: MentorSliderProps) {
+function MentorSlider({ mentors, title, likedMentors, toggleLike, icon, onBookSession }: MentorSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const itemsPerSlide = 4;
   const totalSlides = Math.ceil(mentors.length / itemsPerSlide);
@@ -963,7 +1036,10 @@ function MentorSlider({ mentors, title, likedMentors, toggleLike, icon }: Mentor
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 bg-[#FF6C4A] hover:bg-[#FF6C4A]/90 text-white py-2 px-3 rounded-lg font-medium transition-colors text-xs">
+                <button 
+                  onClick={() => onBookSession(mentor)}
+                  className="flex-1 bg-[#FF6C4A] hover:bg-[#FF6C4A]/90 text-white py-2 px-3 rounded-lg font-medium transition-colors text-xs"
+                >
                   Book Now
                 </button>
                 <button className="p-2 bg-[#151515] border border-gray-600 text-white rounded-lg hover:border-[#FF6C4A] transition-colors">
@@ -1004,7 +1080,9 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
-  const [likedMentors, setLikedMentors] = useState(new Set([3, 6, 10, 18, 24, 26, 29, 32, 36]));
+  const [likedMentors, setLikedMentors] = useState(new Set([3, 6, 10, 24, 26]));
+  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const toggleLike = (mentorId: number) => {
     const newLikedMentors = new Set(likedMentors);
@@ -1014,6 +1092,23 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
       newLikedMentors.add(mentorId);
     }
     setLikedMentors(newLikedMentors);
+  };
+
+  const handleBookSession = (mentor: Mentor) => {
+    setSelectedMentor(mentor);
+    setShowBookingModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowBookingModal(false);
+    setSelectedMentor(null);
+  };
+
+  const handleConfirmBooking = (mentorId: number, date: string, time: string) => {
+    // Here you would typically send the booking data to your backend
+    console.log('Booking confirmed:', { mentorId, date, time });
+    // Show success message or redirect
+    alert('Session booked successfully! You will receive a confirmation email shortly.');
   };
 
   return (
@@ -1031,53 +1126,56 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             </p>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Total Sessions</p>
-                  <p className="text-2xl font-bold text-white">12</p>
-                </div>
-                <div className="w-12 h-12 bg-[#FF6C4A]/20 rounded-lg flex items-center justify-center">
-                  <Calendar className="text-[#FF6C4A]" size={24} />
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Hours Mentored</p>
-                  <p className="text-2xl font-bold text-white">24</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <Clock className="text-blue-500" size={24} />
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Goals Achieved</p>
-                  <p className="text-2xl font-bold text-white">8</p>
-                </div>
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <Award className="text-green-500" size={24} />
-                </div>
+          {/* Quick Actions and Recent Activity */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Quick Actions */}
+            <div className="lg:col-span-2">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Zap className="mr-2 text-[#FF6C4A]" size={20} />
+                Quick Actions
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {quickActions.map((action) => (
+                  <div key={action.id} className="bg-[#1E1E1E] p-4 rounded-xl border border-gray-700 hover:border-[#FF6C4A] transition-colors group cursor-pointer">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center`}>
+                        {action.icon}
+                      </div>
+                      <ChevronRight className="text-gray-400 group-hover:text-[#FF6C4A] transition-colors" size={16} />
+                    </div>
+                    <h4 className="text-white font-medium mb-1">{action.title}</h4>
+                    <p className="text-gray-400 text-sm mb-3">{action.description}</p>
+                    <button className="text-[#FF6C4A] text-sm font-medium hover:text-[#FF6C4A]/80 transition-colors">
+                      {action.action} →
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">Avg Rating Given</p>
-                  <p className="text-2xl font-bold text-white">4.8</p>
+            {/* Recent Activity */}
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Bell className="mr-2 text-[#FF6C4A]" size={20} />
+                Recent Activity
+              </h3>
+              <div className="bg-[#1E1E1E] p-4 rounded-xl border border-gray-700">
+                <div className="space-y-4">
+                  {recentActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {activity.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-300">{activity.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                  <Star className="text-yellow-500" size={24} />
-                </div>
+                <button className="w-full mt-4 text-[#FF6C4A] text-sm font-medium hover:text-[#FF6C4A]/80 transition-colors">
+                  View All Activity →
+                </button>
               </div>
             </div>
           </div>
@@ -1165,6 +1263,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             likedMentors={likedMentors}
             toggleLike={toggleLike}
             icon={<Users className="text-[#FF6C4A]" size={20} />}
+            onBookSession={handleBookSession}
           />
 
           {/* Industry Experts Section */}
@@ -1174,6 +1273,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             likedMentors={likedMentors}
             toggleLike={toggleLike}
             icon={<Briefcase className="text-[#FF6C4A]" size={20} />}
+            onBookSession={handleBookSession}
           />
 
           {/* Life Coaches Section */}
@@ -1183,37 +1283,19 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             likedMentors={likedMentors}
             toggleLike={toggleLike}
             icon={<Target className="text-[#FF6C4A]" size={20} />}
-          />
-
-          {/* Skill Development Mentors Section */}
-          <MentorSlider 
-            mentors={skillMentors} 
-            title="Skill Development Mentors" 
-            likedMentors={likedMentors}
-            toggleLike={toggleLike}
-            icon={<Zap className="text-[#FF6C4A]" size={20} />}
-          />
-
-          {/* Top Performers Section */}
-          <MentorSlider 
-            mentors={topPerformers} 
-            title="Top Performers & C-Suite Executives" 
-            likedMentors={likedMentors}
-            toggleLike={toggleLike}
-            icon={<Award className="text-[#FF6C4A]" size={20} />}
-          />
-
-          {/* Creative Professionals Section */}
-          <MentorSlider 
-            mentors={creativeExperts} 
-            title="Creative Professionals & Artists" 
-            likedMentors={likedMentors}
-            toggleLike={toggleLike}
-            icon={<Video className="text-[#FF6C4A]" size={20} />}
+            onBookSession={handleBookSession}
           />
 
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        mentor={selectedMentor}
+        isOpen={showBookingModal}
+        onClose={handleCloseModal}
+        onConfirmBooking={handleConfirmBooking}
+      />
 
       {/* Footer */}
       <footer className="bg-[#151515] text-white py-8 border-t border-gray-700">
