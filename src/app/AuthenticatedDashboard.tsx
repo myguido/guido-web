@@ -37,6 +37,9 @@ import {
   FileText,
   Bell
 } from 'lucide-react';
+import AboutUsPage from '../components/AboutUsPage';
+import CareersPage from '../components/CareersPage';
+import ContactPage from '../components/ContactPage';
 
 // TypeScript interfaces
 interface Mentor {
@@ -1083,6 +1086,9 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
   const [likedMentors, setLikedMentors] = useState(new Set([3, 6, 10, 24, 26]));
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showAboutUs, setShowAboutUs] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [showCareers, setShowCareers] = useState(false);
 
   const toggleLike = (mentorId: number) => {
     const newLikedMentors = new Set(likedMentors);
@@ -1326,26 +1332,35 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <button className="hover:text-white transition-colors text-left">
-                    About Us
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-white transition-colors text-left">
-                    Careers
-                  </button>
-                </li>
-                <li>Blog</li>
-                <li>
-                  <button className="hover:text-white transition-colors text-left">
-                    Contact
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
+                <ul className="space-y-2 text-gray-400">
+                  <li>
+                    <button 
+                      onClick={() => setShowAboutUs(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      About Us
+                    </button>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => setShowCareers(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      Careers
+                    </button>
+                  </li>
+                  <li>Blog</li>
+                  <li>
+                    <button 
+                      onClick={() => setShowContact(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      Contact
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div>
               <h4 className="font-semibold mb-4">Connect</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
@@ -1376,7 +1391,28 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
           </div>
         </div>
       </footer>
-    </div>
+
+      {/* Modal Components - Fixed prop names */}
+              {showAboutUs && (
+                <AboutUsPage onBack={() => setShowAboutUs(false)} />
+              )}
+      
+              {showContact && (
+                <ContactPage 
+                  onBack={() => setShowContact(false)} 
+                  isModal={true} 
+                />
+              )}
+      
+              {showCareers && (
+                <CareersPage 
+                  onClose={() => setShowCareers(false)} 
+                  onBack={() => setShowCareers(false)} 
+                  isModal={true} 
+                />
+              )}
+            </div>
+    
   );
 }
 

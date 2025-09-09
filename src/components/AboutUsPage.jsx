@@ -1,45 +1,26 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Target, Rocket, Heart, Linkedin, Twitter, Mail, TrendingUp, Sparkles, Goal, Users } from 'lucide-react';
+import { ArrowLeft, Rocket } from 'lucide-react';
 
 export default function AboutUsPage({ onBack }) {
-  // Team members data - Updated with asset paths for your images
+  // Team members data
   const teamMembers = [
     {
-      image: '/assets/ritsssss.jpg', // Replace with the actual path to your image
+      image: '/assets/ritsssss.jpg',
       name: 'Ritwaj Ranjan',
       title: 'CEO & Founder',
-      bio: 'A visionary leader with a passion for leveraging technology to solve real-world challenges. Ritwaj drives the company\'s strategic direction.',
+      bio: "A visionary leader with a passion for leveraging technology to solve real-world challenges. Ritwaj drives the company's strategic direction.",
       skills: ['Strategy', 'Vision', 'Leadership'],
       gradient: 'from-[#FF7A59] to-[#FF9B82]'
     },
     {
-      image: '/assets/dishaformal.jpeg', // Replace with the actual path to your image
+      image: '/assets/dishaformal.jpeg',
       name: 'Disha Suryawanshi',
       title: 'Co-founder & CMO',
       bio: 'A creative powerhouse dedicated to building a brand that resonates. Disha crafts our narrative and connects Guido with the world.',
       skills: ['Marketing', 'Branding', 'Growth'],
       gradient: 'from-[#FF9B82] to-[#FFB29A]'
-    }
-  ];
-
-  // Core values data
-  const coreValues = [
-    {
-      icon: <Target size={32} />,
-      title: 'Our Mission',
-      description: 'To democratize career guidance, making personalized and insightful mentorship accessible to everyone, everywhere.'
-    },
-    {
-      icon: <Rocket size={32} />,
-      title: 'Our Vision',
-      description: 'To create a world where every individual can discover their true potential and build a career they are passionate about.'
-    },
-    {
-      icon: <Heart size={32} />,
-      title: 'Our Values',
-      description: 'Driven by empathy, integrity, and innovation, we are committed to empowering our users on their professional journey.'
     }
   ];
 
@@ -52,7 +33,7 @@ export default function AboutUsPage({ onBack }) {
       </div>
       
       <main className="relative z-10">
-        {/* Back Button Bar - Made sticky to stay at top on scroll */}
+        {/* Back Button Bar */}
         <div className="sticky top-0 bg-[#121212]/80 backdrop-blur-md z-40 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <button
@@ -118,29 +99,50 @@ export default function AboutUsPage({ onBack }) {
           </div>
         </section>
 
-        {/* Our DNA Section */}
+        {/* Story Section 1: Our Genesis */}
         <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold">Our Core Principles</h2>
-              <div className="w-20 h-1 bg-gradient-to-r from-[#FF7A59] to-[#FFB29A] mx-auto mt-4 rounded-full"></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {coreValues.map((value, index) => (
-                <div key={index} className="bg-white/5 p-8 rounded-2xl border border-transparent hover:border-white/20 transition-colors duration-300">
-                  <div className="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-[#FF7A59] to-[#FFB29A] text-white rounded-xl">
-                    {value.icon}
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
-                  <p className="text-gray-400">{value.description}</p>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-[#FF7A59] to-[#FFB29A] bg-clip-text text-transparent inline-block">
+                        Our Genesis
+                    </h2>
+                    <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+                        From a simple idea to a powerful platform, our journey began with a single goal: to empower careers.
+                    </p>
                 </div>
-              ))}
+                <div className="mt-12 animate-fade-in">
+                    <img
+                        src="/assets/direction.png"
+                        alt="Our Genesis"
+                        className="rounded-lg shadow-2xl w-full h-auto"
+                    />
+                </div>
             </div>
-          </div>
         </section>
 
+        {/* Story Section 2: Building The Future */}
+        <section className="py-24 bg-black/20">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-[#FF7A59] to-[#FFB29A] bg-clip-text text-transparent inline-block">
+                        Building The Future
+                    </h2>
+                    <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+                        Every line of code, every partnership, every success story fuels our passion to innovate.
+                    </p>
+                </div>
+                <div className="mt-12 animate-fade-in">
+                    <img
+                        src="/assets/brandstory.jpg"
+                        alt="Building The Future"
+                        className="rounded-lg shadow-2xl w-full h-auto"
+                    />
+                </div>
+            </div>
+        </section>
+        
         {/* CTA Section */}
-        <section className="py-24">
+        <section className="py-24 bg-[#121212]">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <div className="relative p-10 bg-gradient-to-br from-[#FF7A59]/80 to-[#FFB29A]/80 rounded-3xl overflow-hidden">
                     <div className="absolute inset-0 bg-black/20"></div>
@@ -150,7 +152,7 @@ export default function AboutUsPage({ onBack }) {
                             Join us on our mission to empower careers. Discover your potential and connect with the opportunities that await you.
                         </p>
                         <button className="bg-white text-[#FF7A59] px-8 py-3 rounded-full text-lg font-bold hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                            <span className="flex items-center">
+                            <span className="flex items-center justify-center">
                                 Start Your Journey <Rocket className="ml-2" size={20} />
                             </span>
                         </button>
@@ -162,12 +164,20 @@ export default function AboutUsPage({ onBack }) {
 
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        
         body {
           font-family: 'Inter', sans-serif;
         }
+
         .animate-pulse-slow {
           animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        .animate-fade-in {
+            animation: fade-in 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
         @keyframes pulse-slow {
           0%, 100% {
             opacity: 0.5;
@@ -177,6 +187,17 @@ export default function AboutUsPage({ onBack }) {
             opacity: 1;
             transform: scale(1.1);
           }
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
       `}</style>
     </div>
@@ -188,4 +209,3 @@ export default function AboutUsPage({ onBack }) {
     </div>
   );
 }
-
