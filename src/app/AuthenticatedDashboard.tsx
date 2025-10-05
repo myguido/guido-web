@@ -1379,7 +1379,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="https://www.instagram.com/myguido.in?igsh=M3huZjE5eDY3OGdz&utm_source=qr" className="hover:text-white transition-colors">
                     Instagram
                   </a>
                 </li>
