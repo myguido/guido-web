@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Search,
   Filter,
@@ -35,13 +35,23 @@ import {
   AlertCircle,
   Play,
   FileText,
-  Bell
+  Bell,
+  Send,
+  Smile,
+  Paperclip,
+  CheckCircle2,
+  Info,
+  MoreVertical
 } from 'lucide-react';
-import AboutUsPage from '../components/AboutUsPage';
-import CareersPage from '../components/CareersPage';
-import ContactPage from '../components/ContactPage';
 
 // TypeScript interfaces
+interface Message {
+  id: number;
+  text: string;
+  sender: 'user' | 'mentor';
+  timestamp: string;
+}
+
 interface Mentor {
   id: number;
   name: string;
@@ -61,6 +71,13 @@ interface Mentor {
   liked: boolean;
   type: string;
   availableSlots: string[];
+  isOnline?: boolean;
+  successRate?: number;
+  bio?: string;
+  education?: string;
+  certifications?: string[];
+  achievements?: string[];
+  languages?: string[];
 }
 
 interface Category {
@@ -93,6 +110,7 @@ interface MentorSliderProps {
   toggleLike: (mentorId: number) => void;
   icon: React.ReactElement;
   onBookSession: (mentor: Mentor) => void;
+  onMessageMentor: (mentor: Mentor) => void;
 }
 
 interface BookingModalProps {
@@ -100,6 +118,12 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirmBooking: (mentorId: number, date: string, time: string) => void;
+}
+
+interface ChatInterfaceProps {
+  mentor: Mentor | null;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 // Quick Actions Data
@@ -169,6 +193,290 @@ const recentActivities = [
     icon: <MessageCircle className="text-[#FF6C4A]" size={16} />
   }
 ];
+
+// Chat Interface Component
+function ChatInterface({ mentor, isOpen, onClose }: ChatInterfaceProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [showProfile, setShowProfile] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && mentor) {
+      setMessages([
+        {
+          id: 1,
+          text: `Hi! I'm ${mentor.name}. I'm excited to help you with your career journey. What specific challenge or goal would you like to work on today?`,
+          sender: 'mentor',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    }
+  }, [isOpen, mentor]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = () => {
+    if (newMessage.trim()) {
+      const userMessage: Message = {
+        id: messages.length + 1,
+        text: newMessage,
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      setMessages(prev => [...prev, userMessage]);
+      setNewMessage('');
+      
+      setTimeout(() => {
+        const responses = [
+          "I understand your concern. Let me share some strategic insights that could help you navigate this situation effectively.",
+          "That's a great question! Based on my experience with similar cases, here's what I'd recommend...",
+          "I appreciate you sharing that with me. Let's work together to create a personalized action plan.",
+          "Your situation is quite common, and there are proven strategies we can implement. Here's my approach..."
+        ];
+        
+        const mentorResponse: Message = {
+          id: messages.length + 2,
+          text: responses[Math.floor(Math.random() * responses.length)],
+          sender: 'mentor',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, mentorResponse]);
+      }, 1500);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  if (!isOpen || !mentor) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+      <div className="bg-[#1A1D21] w-full max-w-5xl h-[85vh] rounded-2xl shadow-2xl flex overflow-hidden border border-gray-800">
+        
+        {/* Chat Main Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Chat Header */}
+          <div className="bg-[#23272B] px-6 py-4 flex items-center justify-between border-b border-gray-800">
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X size={22} />
+              </button>
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <img
+                    src={mentor.image}
+                    alt={mentor.name}
+                    className="w-11 h-11 rounded-full object-cover border-2 border-[#FF6C4A]"
+                  />
+                  {mentor.isOnline && (
+                    <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#23272B]"></div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold text-base">{mentor.name}</h3>
+                  <p className="text-gray-400 text-xs">
+                    {mentor.isOnline ? 'Active now' : 'Offline'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setShowProfile(!showProfile)}
+                className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <Info size={20} />
+              </button>
+              <button className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+                <Video size={20} />
+              </button>
+              <button className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+                <Phone size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Chat Messages */}
+          <div 
+            className="flex-1 overflow-y-auto px-6 py-6 space-y-4"
+            style={{ backgroundColor: '#1A1D21' }}
+          >
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-[70%] ${
+                  message.sender === 'user'
+                    ? 'bg-[#FF6C4A] text-white rounded-2xl rounded-tr-sm'
+                    : 'bg-[#2A2E32] text-white rounded-2xl rounded-tl-sm'
+                } px-4 py-3 shadow-lg`}>
+                  <p className="text-sm leading-relaxed break-words">{message.text}</p>
+                  <p className={`text-[10px] mt-1.5 flex items-center justify-end space-x-1 ${
+                    message.sender === 'user' ? 'text-white/70' : 'text-gray-500'
+                  }`}>
+                    <span>{message.timestamp}</span>
+                    {message.sender === 'user' && (
+                      <CheckCircle2 size={12} className="text-white/80" />
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Chat Input */}
+          <div className="bg-[#23272B] px-6 py-4 border-t border-gray-800">
+            <div className="flex items-end space-x-3">
+              <button className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+                <Paperclip size={20} />
+              </button>
+              <div className="flex-1 relative bg-[#2A2E32] rounded-xl border border-gray-700 focus-within:border-[#FF6C4A] transition-colors">
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type a message..."
+                  rows={1}
+                  className="w-full bg-transparent px-4 py-3 focus:outline-none resize-none text-white placeholder-gray-500 text-sm max-h-32"
+                  style={{ 
+                    resize: 'none',
+                    overflow: 'hidden',
+                  }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = Math.min(target.scrollHeight, 128) + 'px';
+                  }}
+                />
+              </div>
+              <button className="p-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+                <Smile size={20} />
+              </button>
+              <button 
+                onClick={sendMessage}
+                disabled={!newMessage.trim()}
+                className={`p-3 rounded-xl transition-all ${
+                  newMessage.trim() 
+                    ? 'bg-[#FF6C4A] hover:bg-[#FF6C4A]/90 text-white shadow-lg shadow-[#FF6C4A]/30' 
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <Send size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Sidebar */}
+        {showProfile && (
+          <div className="w-80 bg-[#23272B] border-l border-gray-800 overflow-y-auto">
+            {/* Profile Header */}
+            <div className="p-6 border-b border-gray-800">
+              <div className="text-center">
+                <img
+                  src={mentor.image}
+                  alt={mentor.name}
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-3 border-[#FF6C4A]"
+                />
+                <h2 className="text-white font-bold text-xl mb-1">{mentor.name}</h2>
+                <p className="text-[#FF6C4A] text-sm font-medium mb-1">{mentor.title}</p>
+                <p className="text-gray-500 text-xs">{mentor.experience}</p>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="p-6 border-b border-gray-800">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-1 mb-1">
+                    <Star className="text-yellow-400 fill-current" size={14} />
+                    <span className="font-bold text-white text-sm">{mentor.rating}</span>
+                  </div>
+                  <p className="text-gray-500 text-xs">{mentor.reviews} reviews</p>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold text-white text-sm mb-1">{mentor.sessions}</div>
+                  <p className="text-gray-500 text-xs">Sessions</p>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold text-white text-sm mb-1">{mentor.successRate || 95}%</div>
+                  <p className="text-gray-500 text-xs">Success</p>
+                </div>
+              </div>
+            </div>
+
+            {/* About */}
+            {mentor.bio && (
+              <div className="p-6 border-b border-gray-800">
+                <h4 className="text-white font-semibold mb-3 text-sm">About</h4>
+                <p className="text-gray-400 text-sm leading-relaxed">{mentor.bio}</p>
+              </div>
+            )}
+
+            {/* Specializations */}
+            <div className="p-6 border-b border-gray-800">
+              <h4 className="text-white font-semibold mb-3 text-sm">Specializations</h4>
+              <div className="flex flex-wrap gap-2">
+                {mentor.specializations.map((spec, index) => (
+                  <span
+                    key={index}
+                    className="bg-[#2A2E32] text-gray-300 px-3 py-1.5 rounded-lg text-xs border border-gray-700"
+                  >
+                    {spec}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="p-6 border-b border-gray-800">
+              <h4 className="text-white font-semibold mb-3 text-sm">Location</h4>
+              <div className="flex items-center space-x-2">
+                <MapPin className="text-[#FF6C4A]" size={16} />
+                <p className="text-gray-300 text-sm">{mentor.location}</p>
+              </div>
+            </div>
+
+            {/* Pricing */}
+            <div className="p-6 border-b border-gray-800">
+              <h4 className="text-white font-semibold mb-3 text-sm">Session Fee</h4>
+              <div className="bg-[#2A2E32] rounded-lg p-4 text-center border border-gray-700">
+                <div className="text-2xl font-bold text-[#FF6C4A] mb-1">{mentor.price}</div>
+                <p className="text-gray-500 text-xs">per session ({mentor.duration})</p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="p-6 space-y-3">
+              <button className="w-full bg-[#FF6C4A] hover:bg-[#FF6C4A]/90 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#FF6C4A]/30">
+                <Calendar size={18} />
+                <span>Book Session</span>
+              </button>
+              <button className="w-full bg-[#2A2E32] hover:bg-[#333740] text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center space-x-2 border border-gray-700">
+                <Video size={18} />
+                <span>Video Call</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // Booking Modal Component
 function BookingModal({ mentor, isOpen, onClose, onConfirmBooking }: BookingModalProps) {
@@ -513,7 +821,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 2 hours",
     liked: false,
     type: "counsellor",
-    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"],
+    isOnline: true,
+    successRate: 95,
+    bio: "Technology career strategist with 8+ years of experience guiding professionals from startups to Fortune 500 companies.",
+    languages: ["English", "Hindi", "Marathi"]
   },
   {
     id: 3,
@@ -533,7 +845,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 30 min",
     liked: true,
     type: "counsellor",
-    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"],
+    isOnline: true,
+    successRate: 92,
+    bio: "Healthcare career specialist helping medical professionals navigate their career paths.",
+    languages: ["English", "Hindi", "Kannada"]
   },
   {
     id: 5,
@@ -553,7 +869,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "counsellor",
-    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"],
+    isOnline: false,
+    successRate: 88,
+    bio: "Creative career expert with deep knowledge of design and media industries.",
+    languages: ["English", "Hindi", "Tamil"]
   },
   {
     id: 6,
@@ -573,7 +893,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 2 hours",
     liked: true,
     type: "counsellor",
-    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "06:00 PM"]
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "06:00 PM"],
+    isOnline: true,
+    successRate: 96,
+    bio: "Education consultant specializing in higher education and international opportunities.",
+    languages: ["English", "Hindi", "Telugu"]
   },
   {
     id: 21,
@@ -593,7 +917,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "counsellor",
-    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"],
+    isOnline: true,
+    successRate: 94,
+    bio: "Psychology career counsellor with expertise in mental health careers.",
+    languages: ["English", "Hindi", "Marathi"]
   },
   {
     id: 22,
@@ -613,7 +941,11 @@ const counsellors: Mentor[] = [
     responseTime: "< 3 hours",
     liked: false,
     type: "counsellor",
-    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"]
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"],
+    isOnline: false,
+    successRate: 93,
+    bio: "Engineering career specialist with experience across multiple disciplines.",
+    languages: ["English", "Hindi"]
   }
 ];
 
@@ -637,7 +969,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "expert",
-    availableSlots: ["10:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
+    availableSlots: ["10:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"],
+    isOnline: true,
+    successRate: 92,
+    bio: "Finance industry expert with extensive experience in banking and investment sectors.",
+    languages: ["English", "Hindi"]
   },
   {
     id: 4,
@@ -657,7 +993,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 3 hours",
     liked: false,
     type: "expert",
-    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
+    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"],
+    isOnline: false,
+    successRate: 90,
+    bio: "Startup mentor and former founder with deep expertise in entrepreneurship.",
+    languages: ["English", "Hindi", "Marathi"]
   },
   {
     id: 7,
@@ -677,7 +1017,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "expert",
-    availableSlots: ["09:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
+    availableSlots: ["09:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"],
+    isOnline: true,
+    successRate: 91,
+    bio: "Marketing strategist specializing in digital transformation and brand growth.",
+    languages: ["English", "Hindi", "Gujarati"]
   },
   {
     id: 8,
@@ -697,7 +1041,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 4 hours",
     liked: false,
     type: "expert",
-    availableSlots: ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"]
+    availableSlots: ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"],
+    isOnline: true,
+    successRate: 96,
+    bio: "Data science expert with focus on ML and AI applications.",
+    languages: ["English", "Hindi", "Malayalam"]
   },
   {
     id: 23,
@@ -717,7 +1065,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 2 hours",
     liked: false,
     type: "expert",
-    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "03:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "03:00 PM"],
+    isOnline: true,
+    successRate: 89,
+    bio: "HR expert specializing in talent acquisition and leadership development.",
+    languages: ["English", "Hindi"]
   },
   {
     id: 24,
@@ -737,7 +1089,11 @@ const industryExperts: Mentor[] = [
     responseTime: "< 2 hours",
     liked: true,
     type: "expert",
-    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"]
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"],
+    isOnline: true,
+    successRate: 94,
+    bio: "Product management expert with strategic thinking and UX expertise.",
+    languages: ["English", "Hindi", "Kannada"]
   }
 ];
 
@@ -761,7 +1117,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "coach",
-    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"],
+    isOnline: true,
+    successRate: 97,
+    bio: "Executive coach specializing in leadership development and work-life balance.",
+    languages: ["English", "Hindi", "Marathi"]
   },
   {
     id: 10,
@@ -781,7 +1141,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 2 hours",
     liked: true,
     type: "coach",
-    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"]
+    availableSlots: ["10:00 AM", "12:00 PM", "03:00 PM", "05:00 PM"],
+    isOnline: true,
+    successRate: 93,
+    bio: "Performance coach focused on goal achievement and productivity.",
+    languages: ["English", "Hindi", "Tamil"]
   },
   {
     id: 11,
@@ -801,7 +1165,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 30 min",
     liked: false,
     type: "coach",
-    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "04:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "01:00 PM", "04:00 PM"],
+    isOnline: true,
+    successRate: 95,
+    bio: "Wellness coach specializing in mindfulness and stress management.",
+    languages: ["English", "Hindi", "Malayalam"]
   },
   {
     id: 12,
@@ -821,7 +1189,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 3 hours",
     liked: false,
     type: "coach",
-    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "06:00 PM"]
+    availableSlots: ["10:00 AM", "01:00 PM", "03:00 PM", "06:00 PM"],
+    isOnline: false,
+    successRate: 91,
+    bio: "Career transition specialist helping professionals navigate career changes.",
+    languages: ["English", "Hindi"]
   },
   {
     id: 25,
@@ -841,7 +1213,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 1 hour",
     liked: false,
     type: "coach",
-    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "05:00 PM"]
+    availableSlots: ["09:00 AM", "11:00 AM", "02:00 PM", "05:00 PM"],
+    isOnline: true,
+    successRate: 92,
+    bio: "Communication coach specializing in public speaking and presentation skills.",
+    languages: ["English", "Hindi", "Tamil"]
   },
   {
     id: 26,
@@ -861,7 +1237,11 @@ const lifeCoaches: Mentor[] = [
     responseTime: "< 4 hours",
     liked: true,
     type: "coach",
-    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"]
+    availableSlots: ["11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"],
+    isOnline: true,
+    successRate: 98,
+    bio: "Leadership development expert with extensive experience in team management.",
+    languages: ["English", "Hindi", "Marathi"]
   }
 ];
 
@@ -896,7 +1276,7 @@ const upcomingSessions: UpcomingSession[] = [
 ];
 
 // Slider Component
-function MentorSlider({ mentors, title, likedMentors, toggleLike, icon, onBookSession }: MentorSliderProps) {
+function MentorSlider({ mentors, title, likedMentors, toggleLike, icon, onBookSession, onMessageMentor }: MentorSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const itemsPerSlide = 4;
   const totalSlides = Math.ceil(mentors.length / itemsPerSlide);
@@ -1045,7 +1425,10 @@ function MentorSlider({ mentors, title, likedMentors, toggleLike, icon, onBookSe
                 >
                   Book Now
                 </button>
-                <button className="p-2 bg-[#151515] border border-gray-600 text-white rounded-lg hover:border-[#FF6C4A] transition-colors">
+                <button 
+                  onClick={() => onMessageMentor(mentor)}
+                  className="p-2 bg-[#151515] border border-gray-600 text-white rounded-lg hover:border-[#FF6C4A] transition-colors"
+                >
                   <MessageCircle size={14} />
                 </button>
                 <button className="p-2 bg-[#151515] border border-gray-600 text-white rounded-lg hover:border-[#FF6C4A] transition-colors">
@@ -1086,9 +1469,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
   const [likedMentors, setLikedMentors] = useState(new Set([3, 6, 10, 24, 26]));
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const [showAboutUs, setShowAboutUs] = useState(false);
-  const [showContact, setShowContact] = useState(false);
-  const [showCareers, setShowCareers] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
 
   const toggleLike = (mentorId: number) => {
     const newLikedMentors = new Set(likedMentors);
@@ -1105,15 +1486,23 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
     setShowBookingModal(true);
   };
 
-  const handleCloseModal = () => {
+  const handleMessageMentor = (mentor: Mentor) => {
+    setSelectedMentor(mentor);
+    setShowChatModal(true);
+  };
+
+  const handleCloseBookingModal = () => {
     setShowBookingModal(false);
     setSelectedMentor(null);
   };
 
+  const handleCloseChatModal = () => {
+    setShowChatModal(false);
+    setSelectedMentor(null);
+  };
+
   const handleConfirmBooking = (mentorId: number, date: string, time: string) => {
-    // Here you would typically send the booking data to your backend
     console.log('Booking confirmed:', { mentorId, date, time });
-    // Show success message or redirect
     alert('Session booked successfully! You will receive a confirmation email shortly.');
   };
 
@@ -1270,6 +1659,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             toggleLike={toggleLike}
             icon={<Users className="text-[#FF6C4A]" size={20} />}
             onBookSession={handleBookSession}
+            onMessageMentor={handleMessageMentor}
           />
 
           {/* Industry Experts Section */}
@@ -1280,6 +1670,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             toggleLike={toggleLike}
             icon={<Briefcase className="text-[#FF6C4A]" size={20} />}
             onBookSession={handleBookSession}
+            onMessageMentor={handleMessageMentor}
           />
 
           {/* Life Coaches Section */}
@@ -1290,6 +1681,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             toggleLike={toggleLike}
             icon={<Target className="text-[#FF6C4A]" size={20} />}
             onBookSession={handleBookSession}
+            onMessageMentor={handleMessageMentor}
           />
 
         </div>
@@ -1299,8 +1691,15 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
       <BookingModal
         mentor={selectedMentor}
         isOpen={showBookingModal}
-        onClose={handleCloseModal}
+        onClose={handleCloseBookingModal}
         onConfirmBooking={handleConfirmBooking}
+      />
+
+      {/* Chat Modal */}
+      <ChatInterface
+        mentor={selectedMentor}
+        isOpen={showChatModal}
+        onClose={handleCloseChatModal}
       />
 
       {/* Footer */}
@@ -1332,35 +1731,26 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li>
-                    <button 
-                      onClick={() => setShowAboutUs(true)}
-                      className="hover:text-white transition-colors text-left"
-                    >
-                      About Us
-                    </button>
-                  </li>
-                  <li>
-                    <button 
-                      onClick={() => setShowCareers(true)}
-                      className="hover:text-white transition-colors text-left"
-                    >
-                      Careers
-                    </button>
-                  </li>
-                  <li>Blog</li>
-                  <li>
-                    <button 
-                      onClick={() => setShowContact(true)}
-                      className="hover:text-white transition-colors text-left"
-                    >
-                      Contact
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <div>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <button className="hover:text-white transition-colors text-left">
+                    About Us
+                  </button>
+                </li>
+                <li>
+                  <button className="hover:text-white transition-colors text-left">
+                    Careers
+                  </button>
+                </li>
+                <li>Blog</li>
+                <li>
+                  <button className="hover:text-white transition-colors text-left">
+                    Contact
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div>
               <h4 className="font-semibold mb-4">Connect</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
@@ -1391,28 +1781,7 @@ function AuthenticatedDashboard({ user }: AuthenticatedDashboardProps) {
           </div>
         </div>
       </footer>
-
-      {/* Modal Components - Fixed prop names */}
-              {showAboutUs && (
-                <AboutUsPage onBack={() => setShowAboutUs(false)} />
-              )}
-      
-              {showContact && (
-                <ContactPage 
-                  onBack={() => setShowContact(false)} 
-                  isModal={true} 
-                />
-              )}
-      
-              {showCareers && (
-                <CareersPage 
-                  onClose={() => setShowCareers(false)} 
-                  onBack={() => setShowCareers(false)} 
-                  isModal={true} 
-                />
-              )}
-            </div>
-    
+    </div>
   );
 }
 
