@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronRight, Check, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useKeenSlider } from "keen-slider/react";
@@ -12,6 +13,7 @@ import ContactPage from '../components/ContactPage';
 import AuthManager from '../components/auth/AuthManager';
 import AuthenticatedDashboard from './AuthenticatedDashboard';
 import { AuthProvider, useAuth } from '../components/auth/AuthProvider';
+import { authHelpers, utils } from '../lib/supabase';
 import {
   UserCheck,
   CalendarCheck,
@@ -545,28 +547,62 @@ function PublicHomePage() {
 // Main Home Content Component
 function HomeContent() {
   const authContext = useAuth();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isCheckingRole, setIsCheckingRole] = useState(false);
+  
   // Type-safe access with fallbacks
   const user = (authContext as any)?.user || null;
   const loading = (authContext as any)?.loading || false;
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Check user role and redirect if needed
+  useEffect(() => {
+    if (user && !loading && !isRedirecting && !isCheckingRole) {
+      const checkUserRole = async () => {
+        setIsCheckingRole(true);
+        try {
+          const { role, error } = await authHelpers.getUserRole(user.id);
+          if (!error && role) {
+            const dashboardPath = utils.getDashboardPath(role);
+            if (dashboardPath !== '/AuthenticatedDashboard') {
+              // Redirect professionals directly to their dashboard immediately
+              setIsRedirecting(true);
+              router.replace(dashboardPath); // Use replace instead of push to avoid history
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Error checking user role:', error);
+        } finally {
+          setIsCheckingRole(false);
+        }
+      };
+      
+      checkUserRole();
+    }
+  }, [user, loading, isRedirecting, isCheckingRole, router]);
+
+  // Show loading spinner while checking auth, role, or redirecting
+  if (loading || isRedirecting || isCheckingRole) {
     return (
       <div className="min-h-screen bg-[#151515] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#FF6C4A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white">Loading...</p>
+          <p className="text-white">{isRedirecting ? 'Redirecting...' : 'Loading...'}</p>
         </div>
       </div>
     );
   }
 
-  // Show authenticated dashboard if user is logged in
+  // If user is authenticated, the top-level effect will handle redirect.
+  // We intentionally avoid rendering the authenticated view here to prevent flicker.
   if (user) {
     return (
-      <div className="min-h-screen bg-[#151515]">
-        <Navbar />
-        <AuthenticatedDashboard user={user} />
+      <div className="min-h-screen bg-[#151515] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6C4A] mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecting to your dashboard...</p>
+        </div>
       </div>
     );
   }

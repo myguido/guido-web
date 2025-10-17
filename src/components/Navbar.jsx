@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Menu, X, Home, Navigation, Users, Briefcase, User, LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../components/auth/AuthProvider';
+import { authHelpers, utils } from '../lib/supabase';
 import AuthManager from '../components/auth/AuthManager';
 
 export default function Navbar() {
@@ -16,6 +17,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, signOut } = useAuth();
+  const [homeHref, setHomeHref] = useState('/');
 
   // Memoize navigation items with icons for bottom nav
   const navItems = useMemo(() => [
@@ -29,6 +31,27 @@ export default function Navbar() {
   const isActiveRoute = useMemo(() => (href) => {
     return pathname === href;
   }, [pathname]);
+
+  // Compute the Home destination based on auth role
+  useEffect(() => {
+    let isMounted = true;
+    const resolveHomeHref = async () => {
+      try {
+        if (loading) return;
+        if (!user) {
+          if (isMounted) setHomeHref('/');
+          return;
+        }
+        const { role } = await authHelpers.getUserRole(user.id);
+        const target = utils.getDashboardPath(role || 'user');
+        if (isMounted) setHomeHref(target);
+      } catch (e) {
+        if (isMounted) setHomeHref('/AuthenticatedDashboard');
+      }
+    };
+    resolveHomeHref();
+    return () => { isMounted = false; };
+  }, [user, loading]);
 
   const handleOpenLogin = () => {
     setAuthMode('login');
@@ -124,19 +147,22 @@ export default function Navbar() {
             {user && (
               <div className="flex items-center">
                 <div className="flex bg-[#1F1F1F] border border-gray-600 rounded-lg px-2 py-1 space-x-2">
-                  {navItems.map((item) => (
+                  {navItems.map((item) => {
+                    const targetHref = item.href === '/' ? homeHref : item.href;
+                    const isActive = isActiveRoute(targetHref);
+                    return (
                     <Link
                       key={item.href}
-                      href={item.href}
+                      href={targetHref}
                       className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                        isActiveRoute(item.href)
+                        isActive
                           ? "bg-[#FF6C4A] text-white shadow-md" 
                           : "text-white hover:bg-gray-700"
                       }`}
                     >
                       {item.label}
                     </Link>
-                  ))}
+                  );})}
                 </div>
               </div>
             )}
@@ -325,12 +351,13 @@ export default function Navbar() {
           <div className="flex justify-around items-center py-2">
             {navItems.map((item) => {
               const IconComponent = item.icon;
-              const isActive = isActiveRoute(item.href);
+              const targetHref = item.href === '/' ? homeHref : item.href;
+              const isActive = isActiveRoute(targetHref);
               
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={targetHref}
                   className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all ${
                     isActive
                       ? "bg-[#FF6C4A] text-white shadow-md" 
